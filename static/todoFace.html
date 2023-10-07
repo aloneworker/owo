@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+	<title>代辦</title>
+	<script src="{% static 'jquery.js' %}"></script>
+	<link rel="stylesheet" href="{% static 'css/card.css' %}"> 
+	<style>
+	 
+			p {
+				font-size: 18px;
+			}
+ </style>
+</head>
+<body>
+
+	{% for date,items,color in datas %}
+	<div class="container">
+	<div class="card" style="color: rgb({{color}},{{color}},{{color}});">
+	<b>[{{date}}] </b>
+	{% for item in items %}
+	{% if item.title == '#' %}
+	<p id="{{item.content}}">
+	<input type='checkbox' id="{{item.content}}"> {{item.content}} </input>
+	</p>
+	{% elif item.title == '^' %}
+	<p>(Done) {{ item.content}}</p>
+	{% else %}
+	<p>{{item.title}}{{ item.content}}</p>
+	{% endif %}
+	{% endfor %}
+	</div>
+	</div>
+	{% endfor %}
+
+</body>
+<script>
+ 
+ $(document).ready(function() {
+
+	$('input[type="checkbox"]').on('change', function() {
+            var isChecked = $(this).is(':checked');
+            var checkboxId = $(this).attr('id');
+			 
+			$.ajax({
+            type:'POST',
+            url:'{% url 'check' %}',
+            data:{
+                'checkbox_value' :isChecked,
+                'txt':checkboxId,
+                'csrfmiddlewaretoken':'{{csrf_token}}',
+            	},
+        	});
+            
+          
+          // 在這裡可以執行其他相關操作
+        });
+ });
+
+       
+ 
+
+ 
+</script>
+</html>

@@ -1,0 +1,6 @@
+<h1>註冊頁面<h1>
+    <form method = "POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type= "submit", value = "註冊">
+    </form>

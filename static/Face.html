@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>響應式網頁</title>
+		<style>
+/* 卡片樣式 */
+.card {
+	background-color: #f2f2f2;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	padding: 20px;
+	margin: 10px;
+}
+.card label {
+  display: inline-block;
+  margin-right: 10px;
+}
+.card select {
+  display: inline-block;
+}
+ 
+.dropdown {
+  display: none;
+}
+   
+		</style>
+	</head>
+	<body>
+
+		{% for item in datas %}
+	 
+		<div class="card">
+			<label for="{{item.content}}">
+				<input type="checkbox" id="{{item.content}}"> {{item.content}}
+			  </label>
+		<div class="dropdown">
+			<select>
+				<option>請選擇你最愛的寵物</option>
+				<option>Dog</option>
+				<option>Cat</option>
+				<option>Hamster</option>
+				<option>Parrot</option>
+				<option>Spider</option>
+				<option>Goldfish</option>
+			</select>
+		  </div>
+		</div>
+		{% endfor %}
+
+
+	</body>
+	<script>
+ 
+ function showDropdown(event) {
+  var card = event.currentTarget;
+  var dropdown = card.querySelector('.dropdown');
+  dropdown.style.display = 'block';
+  window.alert('okkk');
+}
+
+function hideDropdown(event) {
+  var card = event.currentTarget;
+  var dropdown = card.querySelector('.dropdown');
+  dropdown.style.display = 'none';
+}
+
+	</script>
+</html>
+
+

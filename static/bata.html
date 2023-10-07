@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TestWord</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+
+
+       /* 样式用于模态框背景 */
+       .todoNowcontainer {
+          display: none;
+          position: fixed;
+          top: 10;
+          left: 0;
+          width: 100%;
+          height: 30%;
+      
+          background-color: rgba(231, 231, 231 ,0.5);
+          justify-content: center;
+          align-items: center;
+          z-index: 9999;
+      }
+      
+      .todotitle{
+          top: 3;
+          left: 0;
+          width: 30%;
+          margin-bottom: 10px;
+          margin-left: 10px;
+         
+      }
+      
+      /* 样式用于按钮 */
+      .modal-button {
+          margin: 7px;
+          padding: 10px 20px;
+          cursor: pointer;
+          border: none;
+          border-radius: 3px;
+          background-color: #007bff;
+          color: white;
+      }
+
+
+
+
+        .container {
+            text-align: center;
+            margin-top: 150px;
+        }
+        .user-message {
+        text-align: right;
+        color: #007bff;
+        margin-bottom: 10px;
+        }
+
+        .chat-message {
+        text-align: left;
+        color: #333333;
+        margin-bottom: 10px;
+        }
+
+        .chat-message::before {
+        content: ">>";
+        font-weight: bold;
+        margin-right: 5px;
+        }
+
+
+        .chat-container {
+             
+            display: none;
+            max-width: 600px;
+            margin: 0 auto;
+            margin-top: 10px;
+         
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+        .logo {
+            max-width: 200px;
+            height: auto;
+        }
+        .search-box {
+            margin-top: 20px;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 15px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .search-box input[type="text"] {
+            border: none;
+            outline: none;
+            
+            width: 400px;
+            padding: 8px;
+            font-size: 16px;
+        }
+        .search-box button {
+            border: none;
+            background-color: #f2f2f2;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .card {
+            display: inline-block;
+            background-color: rgb(219, 219, 219);
+            padding: 10px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+ 
+
+                /* 添加媒体查询以适应手机屏幕 */
+        @media (max-width: 600px) {
+            /* 600px是一个示例阈值，你可以根据需要进行调整 */
+            .search-box {
+                margin-top: 10px; /* 调整上边距 */
+            }
+
+            .search-box input[type="text"] {
+                width: 70%; /* 设置为相对宽度 */
+            }
+        }
+    </style>
+    <script>
+
+    </script>
+</head>
+<body>
+    <div id="todoNow" class="todoNowcontainer">
+        <!-- 弹出框内容 -->
+         
+            <p id="todoTitle" class="todotitle">TESTT</p>
+            <button class="modal-button" onclick="onOKClick()">完成</button>
+            <button class="modal-button" onclick="onPassClick()">跳過</button>
+            <button class="modal-button" onclick="onDeleteClick()">刪除</button>
+         
+    </div>
+    
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-message">.....</div> 
+    </div>
+    
+    <div class="container" id="inputContainer">
+       
+        {% for ope in OPEs %}
+            <div class="card" id="{{ope}}">{{ope}}</div>
+        {% endfor %}
+     
+    <div>
+       <div class="search-box">
+            <input type="text" placeholder=".....">
+            <button><<</button>
+        </div>
+    </div>
+    </div>
+    <div id="todocardContainer"></div>
+    <div class = "day-card" id="daycardContainer"></div>
+
+    <script >
+
+        function talkTo(what)
+        {
+            var dataToSend = what ;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '{% url 'talking' %}', true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send('talks=' + encodeURIComponent(dataToSend));
+            xhr.onreadystatechange = function() {
+
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        // 在這裡處理回應
+
+                    if (xhr.status === 200) {
+                            
+                            // 狀態碼200表示成功
+                        var response = JSON.parse(xhr.responseText); // 解析JSON回應
+
+                            // 在這裡處理回應
+                        var chat_what = response.response;
+                        var datas = response.datas;
+                            
+                            // 進行進一步的處理，例如將回應添加到您的網頁中
+                        
+                        return chat_what , datas ;
+                      
+                    } else {
+                            // 處理錯誤，例如顯示錯誤信息
+                            console.error('發生錯誤，狀態碼：' + xhr.status);
+                    }   
+                }
+            };
+    
+        }
+
+        
+        function onOKClick()
+        {
+            var modal = document.getElementById("todoNow");
+            modal.style.display = "none";
+            talkTo('OK');
+        }
+
+        function onPassClick()
+        {
+            var modal = document.getElementById("todoNow");
+            modal.style.display = "none";
+            talkTo('PASS');
+        }
+
+        function onDeleteClick()
+        {
+            var modal = document.getElementById("todoNow");
+            modal.style.display = "none";
+            talkTo('Delete');
+        }
+
+
+        document.addEventListener("DOMContentLoaded", function() {
+
+
+
+            function generateCards(dataList) {
+                // 获取显示卡片的容器
+                const cardContainer = document.getElementById("daycardContainer");
+            
+                // 清空容器，以防之前的卡片残留
+                cardContainer.innerHTML = "";
+
+                // 遍历列表，并为每个项创建一个卡片
+                dataList.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "card small-text ";
+                card.style.marginTop = "10px";
+                card.style.float = "left" ;
+                card.style.color = "#F9F9F9" ;
+                card.style.backgroundColor = "#02A2A2" ;
+                // 加入元素
+                item.forEach(wha =>{
+                    const innerDiv = document.createElement("div");
+                    innerDiv.className = "inner-div";
+                innerDiv.textContent = wha; // 在這裡設置內部 div 的內容
+            
+                // 將內部 div 添加到 card 元素中
+                card.appendChild(innerDiv);
+
+                });
+
+                cardContainer.appendChild(card);
+                }); 
+            }
+
+
+
+
+//////////////////// card 改變顏色 //////////////////////////////////////////
+
+
+            const input = document.querySelector("input[type='text']");
+            const button = document.querySelector("button");
+            input.addEventListener("input", function() {
+                if (input.value.trim() !== "") {
+                    button.style.backgroundColor = "#009393"; // 将背景颜色改为军蓝色
+                    button.style.color = "white"; // 将文字颜色改为白色
+                } else {
+                    button.style.backgroundColor = "#f2f2f2";
+                    button.style.color = "black"; // 将文字颜色恢复为黑色
+                }
+            });
+            button.addEventListener("click",function(){
+                
+//////////////////////// AJAX 資料傳送//////////////////////////////////////////////
+
+
+             
+
+                var dataToSend = [input.value];
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '{% url 'talking' %}', true);
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.send('talks=' + encodeURIComponent(dataToSend));
+                xhr.onreadystatechange = function() {
+
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        // 在這裡處理回應
+
+                        if (xhr.status === 200) {
+                            
+                            // 狀態碼200表示成功
+                            var response = JSON.parse(xhr.responseText); // 解析JSON回應
+
+                            // 在這裡處理回應
+                            var chat_what = response.response;
+                            var datas = response.datas;
+                            
+                            // 進行進一步的處理，例如將回應添加到您的網頁中
+                            appendMessage('user', chat_what);
+                            generateCards(datas['items']);
+                        } else {
+                            // 處理錯誤，例如顯示錯誤信息
+                            console.error('發生錯誤，狀態碼：' + xhr.status);
+                        }
+                    }
+                };
+                                
+                input.value="";
+            });
+///////////////////////////////////////////////////////////////////////////////
+//////////////// card 加入點擊事件/////////////////////////////////////////////////////
+            const cards = document.querySelectorAll(".card");
+
+            cards.forEach(card => {
+                card.addEventListener("click", function() {
+                    // 在这里执行你希望触发的点击事件的代码
+                    // 例如，你可以使用 card.id 获取当前点击的 card 元素的 id
+                    // 然后执行相应的操作
+                   
+
+
+
+//////////////////////// AJAX 資料傳送//////////////////////////////////////////////
+
+
+             
+
+                var dataToSend = [card.id];
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '{% url 'talking' %}', true);
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.send('talks=' + encodeURIComponent(dataToSend));
+                xhr.onreadystatechange = function() {
+
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        // 在這裡處理回應
+
+                        if (xhr.status === 200) {
+                            
+                            // 狀態碼200表示成功
+                            var response = JSON.parse(xhr.responseText); // 解析JSON回應
+
+                            // 在這裡處理回應
+                            var chat_what = response.response;
+                            var datas = response.datas;
+                            
+                            // 進行進一步的處理，例如將回應添加到您的網頁中
+                            appendMessage('user', chat_what);
+                            generateCards(datas['items']);
+                        } else {
+                            // 處理錯誤，例如顯示錯誤信息
+                            console.error('發生錯誤，狀態碼：' + xhr.status);
+                        }
+                    }
+                };
+                
+          
+
+///////////////////////////////////////////////////
+
+
+
+                    
+                });
+            });
+///////////////////////////////////////////////////////////////////////
+           
+
+        });
+
+     
+
+    function appendMessage(sender, message) {
+        const chatContainer = document.getElementById("chatContainer");
+        const messageDiv = document.createElement("div");
+        const container = document.getElementById("inputContainer");
+        const cardOp = document.getElementsByClassName("cardOp");
+        const messageParts = new String(message) ;
+        const messages = messageParts.split('|');
+        
+        if (messages.length > 1)
+        {
+            var modal = document.getElementById("todoNow");
+            var title = document.getElementById("todoTitle");
+            modal.style.display = "block";
+            title.textContent = messages[1] ;
+
+        }else
+        {
+            messageDiv.className = sender === "user" ? "user-message" : "chat-message";
+
+         
+            messageDiv.textContent = message;
+            chatContainer.style.display = 'block' ;
+            container.style.marginTop = '10px' ;
+            const cards = document.querySelectorAll(".card");
+            cards.forEach(card => {
+                card.style.display = 'none';
+                });
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight; // Auto-scroll to bottom
+        }
+
+
+
+        }
+    </script>
+
+</body>
+</html>

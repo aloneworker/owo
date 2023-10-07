@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Google Search</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		body {
+			background-color: #fff;
+			font-family: Arial, sans-serif;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			height: 100vh;
+		}
+		form {
+			width: 100%;
+			text-align: center;
+			border: none;
+		}
+		input[type=text] {
+			width: 10%;
+			padding: 12px 20px;
+			margin: 8px 0;
+			box-sizing: border-box;
+			border: 2px solid #ccc;
+			border-radius: 4px;
+			background-color: #fff;
+			font-size: 16px;
+			border: none;
+			transition: width 0.6s ease-in-out;
+		}
+		input[type=text]:focus {
+			width: 80%;
+			background-color: #f2f2f2; 
+			background: linear-gradient(to right, #f2f2f2, #ddd);
+		}
+		input[type=text]{
+			outline:none;
+		}
+		input[type=text]:hover {
+			border: none;
+		}
+	 
+		input[type=submit] {
+			background-color: #4CAF50;
+			color: #fff;
+			padding: 14px 20px;
+			margin: 8px 0;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 16px;
+			width: 5%;
+			max-width: 100px;
+		}
+		input[type=submit]:hover {
+			background-color: #fff;
+			color: #4CAF50;
+		}
+	 
+	</style>
+	<script>
+		 
+
+	</script>
+</head>
+<body>
+	<form action="/whats/" method="post">
+		{% csrf_token %}
+		<input type="text"  name="whats" placeholder="...">
+		<input type="submit" value="Q">
+	</form>
+</body>
+</html>
+

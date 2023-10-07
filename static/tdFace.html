@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>響應式網頁</title>
+		<style>
+/* 卡片樣式 */
+.card {
+	background-color: #f2f2f2;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	padding: 20px;
+	margin: 10px;
+}
+
+			  /* 響應式佈局 */
+			  @media (min-width: 768px) {
+				  .card {
+					  width: 48%;
+					  display: inline-block;
+				  }
+			  }
+		</style>
+	</head>
+	<body>
+
+		{% for item in datas %}
+	 
+		<div class="card">
+		<!-- 加入 #判斷是 -->		
+		<p>{{ item.content}}</p>
+		<!-- 結束 #的判斷 -->
+
+
+		</div>
+		{% endfor %}
+
+
+	</body>
+</html>
+
+
