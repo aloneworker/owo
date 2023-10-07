@@ -5,4 +5,8 @@
 可以存note
 可以 發布 
 
-## ji3hhh
+## 我的寫法
+> 在 github 或 其他地方編輯
+>> git add .  ===> git commit "..."
+<< 上傳到 raspberry 中
+>>> raspberry 上線
