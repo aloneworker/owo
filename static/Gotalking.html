@@ -421,7 +421,11 @@
 
                     if(matches == "Note"){
                         var htmlString = `<p class = "noteClick" id =${remainingText}  >[<span style="color: red;">${matches}</span>]${remainingText}</p>`;
-                    }else
+                    }else if (matches == "Q")
+                    {
+                        var htmlString = `<p class = "todoClick" id =${remainingText}  >[<span style="color: red;">${matches}</span>]${remainingText}</p>`;
+                    }
+                    else
                     {
                         var htmlString = `[<span style="color: red;">${matches}</span>]${remainingText}`;
                         
@@ -437,16 +441,26 @@
                 cardContainer.appendChild(card);
                 }); 
                             // 选择所有具有类名 "noteClick" 的元素
-                    const clickableTextElements = document.querySelectorAll(".noteClick");
-
-                    // 添加点击事件处理程序到每个选定的元素
-                    clickableTextElements.forEach(function(element) {
+                const clickableTextElements = document.querySelectorAll(".noteClick");
+                // 添加点击事件处理程序到每个选定的元素
+                clickableTextElements.forEach(function(element) {
                         element.addEventListener("click", function () {
                             
                             getNoteS(element.id);
                             
                         });
                     });
+
+                const clickableTodoElements = document.querySelectorAll(".todoClick");
+                // 添加点击事件处理程序到每个选定的元素
+                clickableTodoElements.forEach(function(element) {
+                        element.addEventListener("click", function () {
+                            
+                            getTodo(element.id);
+                            
+                        });
+                    });
+                
             }
 
 //////////////////// card 改變顏色 //////////////////////////////////////////
@@ -596,7 +610,39 @@
                     }
             };
     }
+    function getTodo(title,date)
+    {
 
+        var dataToSend = [title];
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '{% url 'getTodos' %}', true);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+ 
+        xhr.send('title=' + encodeURIComponent(dataToSend));
+        xhr.onreadystatechange = function() {
+
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        // 在這裡處理回應
+
+                        if (xhr.status === 200) {
+                            
+                            // 狀態碼200表示成功
+                            var response = JSON.parse(xhr.responseText); // 解析JSON回應
+
+                            // 在這裡處理回應
+                            var title = response.response;
+                            var note = response.datas;
+                          
+                            txtDialog(note['title'],note['txt']); 
+                        
+                        } else {
+                            // 處理錯誤，例如顯示錯誤信息
+                            console.error('發生錯誤，狀態碼：' + xhr.status);
+                        }
+                    }
+            };
+    }
 
     getTODO(title,date)
     {
@@ -658,6 +704,9 @@
                      
                     showDialog();
                     
+                    break ;
+                case "showTODO" :
+                    todoDialog();
                     break ;
             }
             //var modal = document.getElementById("todoNow");
@@ -797,6 +846,68 @@ function editDialog(tit,txt) {
     // 將對話方塊容器添加到文檔的 body 中
     document.body.appendChild(dialogContainer);
 }
+
+function todoDialog() {
+    // 創建對話方塊的容器元素
+    var dialogContainer = document.createElement("div");
+    dialogContainer.style.width = "300px";
+    dialogContainer.style.padding = "20px";
+    dialogContainer.style.border = "1px solid #ccc";
+    dialogContainer.style.backgroundColor = "#fff";
+    dialogContainer.style.position = "fixed";
+    dialogContainer.style.top = "50%";
+    dialogContainer.style.left = "50%";
+    dialogContainer.style.transform = "translate(-50%, -50%)";
+    
+    // 創建標題元素
+    var title = document.createElement("h2");
+    title.textContent = "這是標題";
+ 
+    
+ 
+    
+    // 創建按鈕容器元素
+    var buttonContainer = document.createElement("div");
+    buttonContainer.style.display = "flex";
+    buttonContainer.style.justifyContent = "space-between";
+    
+    // 創建關閉按鈕元素
+    var closeButton = document.createElement("button");
+    closeButton.textContent = "關";
+    closeButton.onclick = function() {
+        document.body.removeChild(dialogContainer); // 關閉對話方塊
+    };
+
+    // 創建Edit按鈕元素
+    var editButton = document.createElement("button");
+    editButton.textContent = "完成";
+    editButton.onclick = function(){
+        alert('完成');
+    };
+    
+    // 向按鈕容器中添加按鈕元素
+    buttonContainer.appendChild(closeButton);
+    buttonContainer.appendChild(editButton);
+    
+    // 向容器中添加元素
+    dialogContainer.appendChild(title);
+ 
+    dialogContainer.appendChild(buttonContainer);
+    
+    // 將對話方塊容器添加到文檔的 body 中
+    document.body.appendChild(dialogContainer);
+}
+
+
+
+
+
+
+
+
+
+
+
 
 function transTXT(tit,txt){
     var tit = [tit]
