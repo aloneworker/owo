@@ -36,7 +36,7 @@ urlpatterns += [
     path('', views.login, name = "login"),
     path('ajaxt/',views.ajaxt, name='ajaxt'),
     path('getNotes/',views.getNotes,name='getNotes'),
-    path('getTodos/',views.getTodos,name="getTodos")
+    path('getTodos/',views.getTodos,name="getTodos"),
     path('saveNotes/',views.saveNotes,name='saveNotes'),
     #path('whats/',views.whats),
     #path('lognote/',views.lognote),
