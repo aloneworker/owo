@@ -27,7 +27,13 @@ def login(request):
         return HttpResponseRedirect('/Gotalking')
     else:
         return render(request, 'login.html', locals())
-
+def getTodos(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        data = bulletNotemodel.objects.filter(content = title)
+        note = {'title':data[0].content,'txt':data[0].txt}
+        return JsonResponse({'response': title,'datas':note })
+     return JsonResponse({'response': '...','datas':'...'})
  
 def getNotes(request):
     if request.method == 'POST':
@@ -35,9 +41,6 @@ def getNotes(request):
         data = bulletNotemodel.objects.filter(content = title)
         note = {'title':data[0].content,'txt':data[0].txt}
         return JsonResponse({'response': title,'datas':note })
-
-
-
     return JsonResponse({'response': '...','datas':'...'})
 
 
