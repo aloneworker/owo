@@ -71,9 +71,9 @@ def saveTodos(request):
         # 在这里处理参数
         if tit :
             todo = bulletNotemodel.objects.get(content = tit)
-            todo.done = done 
+            todo.title = done 
             todo.save()
-            print(todo.done)
+            print(todo.title)
             return JsonResponse({'message': '参数已收到'})
         else:
             return JsonResponse({'message': '缺少参数'}, status=400)
