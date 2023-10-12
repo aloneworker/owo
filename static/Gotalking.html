@@ -455,7 +455,6 @@
                 // 添加点击事件处理程序到每个选定的元素
                 clickableTodoElements.forEach(function(element) {
                         element.addEventListener("click", function () {
-                          	alert('ete');  
                             getTodo(element.id);
                             
                         });
@@ -633,7 +632,7 @@
                             // 在這裡處理回應
                             var note = response.datas;
                           
-                           // txtDialog(note['title'],note['txt']); 
+                            todoDialog(note['title'],note['txt']); 
                         
                         } else {
                             // 處理錯誤，例如顯示錯誤信息
@@ -812,7 +811,7 @@ function editDialog(tit,txt) {
     document.body.appendChild(dialogContainer);
 }
 
-function todoDialog() {
+function todoDialog(tit) {
     // 創建對話方塊的容器元素
     var dialogContainer = document.createElement("div");
     dialogContainer.style.width = "300px";
@@ -826,7 +825,7 @@ function todoDialog() {
     
     // 創建標題元素
     var title = document.createElement("h2");
-    title.textContent = "這是標題";
+    title.textContent = tit;
  
     
  
