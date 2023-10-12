@@ -846,7 +846,8 @@ function todoDialog(tit) {
     var editButton = document.createElement("button");
     editButton.textContent = "完成";
     editButton.onclick = function(){
-        alert('完成');
+        transTodo(tit,"done");
+		alert('完成');
     };
     
     // 向按鈕容器中添加按鈕元素
@@ -868,6 +869,17 @@ function todoDialog(tit) {
 
 
 
+function transTodo(tit,done){
+    var tit = [tit]
+    var done = [done]
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '{% url 'saveTodos' %}', true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    var dataToSend = "tit=" + encodeURIComponent(tit) + "&done=" + encodeURIComponent(done);
+    xhr.send(dataToSend);
+    
+}
 
 
 

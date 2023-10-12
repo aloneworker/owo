@@ -38,6 +38,7 @@ urlpatterns += [
     path('getNotes/',views.getNotes,name='getNotes'),
     path('getTodos/',views.getTodos,name="getTodos"),
     path('saveNotes/',views.saveNotes,name='saveNotes'),
+    path('saveTodos/',views.saveTodos,name="saveTodos"),
     #path('whats/',views.whats),
     #path('lognote/',views.lognote),
     #path('todo/check',views.check,name='check')

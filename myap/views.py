@@ -53,19 +53,32 @@ def saveNotes(request):
         txt = request.POST.get('txt')
         # 在这里处理参数
         if tit :
-            print(txt)
             note = bulletNotemodel.objects.get(content = tit)
             note.txt = txt 
-            print(note.txt)
             note.save()
-            print
-            
             return JsonResponse({'message': '参数已收到'})
         else:
             return JsonResponse({'message': '缺少参数'}, status=400)
     else:
         return JsonResponse({'message': '只接受POST请求'}, status=405)
         
+def saveTodos(request):
+    if request.method == 'POST':
+ 
+        # 获取POST请求中的参数
+        tit = request.POST.get('tit')
+        done = request.POST.get('done')
+        # 在这里处理参数
+        if tit :
+            todo = bulletNotemodel.objects.get(content = tit)
+            todo.done = done 
+            note.save()
+            print(todo.done)
+            return JsonResponse({'message': '参数已收到'})
+        else:
+            return JsonResponse({'message': '缺少参数'}, status=400)
+    else:
+        return JsonResponse({'message': '只接受POST请求'}, status=405)
 
 
 def log_out(request):
