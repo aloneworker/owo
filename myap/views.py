@@ -72,7 +72,7 @@ def saveTodos(request):
         if tit :
             todo = bulletNotemodel.objects.get(content = tit)
             todo.done = done 
-            note.save()
+            todo.save()
             print(todo.done)
             return JsonResponse({'message': '参数已收到'})
         else:
