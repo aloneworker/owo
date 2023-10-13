@@ -2,9 +2,35 @@ from .models import *
 from django.db.models import Q
 import random
 import datetime
-
+from itertools import groupby
+from operator import attrgetter 
+import datetime 
 from django.contrib import auth
 
+
+
+def getSameDate():  #把資料輸出 [日期,A抬頭.A,B抬頭.B]
+        
+        items = []
+        data = bulletNotemodel.objects.order_by('date')
+        for key,group in groupby(data,key=attrgetter('date')):
+            datal = []
+            for g in group:
+                st = '['+g.title+'] '+g.content
+                datal.append(st)
+            
+            key = key.strftime("%Y-%m-%d")
+            datal.append(key)
+            datal.reverse()
+
+            items.append(datal)
+   
+         
+        items.reverse() 
+        context = {
+                'items':items
+            }
+        return context
 
 def savenotes(title,notes):
     today = datetime.datetime.now()
