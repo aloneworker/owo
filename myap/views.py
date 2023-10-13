@@ -77,7 +77,7 @@ def saveTodos(request):
             todo = bulletNotemodel.objects.get(content = tit)
             todo.title = done 
             todo.save()
-            return JsonResponse({'message': '参数已收到,'datas':datas'})
+            return JsonResponse({'message': '参数已收到','datas':datas})
         else:
             return JsonResponse({'message': '缺少参数','datas':datas}, status=400)
     else:
