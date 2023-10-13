@@ -13,6 +13,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import TemplateView, CreateView
 from django.urls import reverse, reverse_lazy
  
+
+
+
 def jst(request):
     return render(request, 'jstest.html' )
 
@@ -51,20 +54,21 @@ def saveNotes(request):
         # 获取POST请求中的参数
         tit = request.POST.get('tit')
         txt = request.POST.get('txt')
+        datas = getSameDate()
         # 在这里处理参数
         if tit :
             note = bulletNotemodel.objects.get(content = tit)
             note.txt = txt 
             note.save()
-            return JsonResponse({'message': '参数已收到'})
+            return JsonResponse({'message': '参数已收到','datas':datas})
         else:
-            return JsonResponse({'message': '缺少参数'}, status=400)
+            return JsonResponse({'message': '缺少参数','datas':datas}, status=400)
     else:
-        return JsonResponse({'message': '只接受POST请求'}, status=405)
+        return JsonResponse({'message': '只接受POST请求','datas':datas}, status=405)
         
 def saveTodos(request):
     if request.method == 'POST':
- 
+        datas = getSameDate()
         # 获取POST请求中的参数
         tit = request.POST.get('tit')
         done = request.POST.get('done')
@@ -73,11 +77,11 @@ def saveTodos(request):
             todo = bulletNotemodel.objects.get(content = tit)
             todo.title = done 
             todo.save()
-            return JsonResponse({'message': '参数已收到'})
+            return JsonResponse({'message': '参数已收到,'datas':datas'})
         else:
-            return JsonResponse({'message': '缺少参数'}, status=400)
+            return JsonResponse({'message': '缺少参数','datas':datas}, status=400)
     else:
-        return JsonResponse({'message': '只接受POST请求'}, status=405)
+        return JsonResponse({'message': '只接受POST请求','datas':datas}, status=405)
 
 
 def log_out(request):

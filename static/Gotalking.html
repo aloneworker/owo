@@ -887,11 +887,9 @@ function transTodo(tit,done){
 
 			// 狀態碼200表示成功
 			var response = JSON.parse(xhr.responseText); // 解析JSON回應
-
-			// 在這裡處理回應
+			var datas = response.datas;
+			generateCards(datas['items']);
 			 
-
-			// 進行進一步的處理，例如將回應添加到您的網頁中
 			  
 		} else {
 			// 處理錯誤，例如顯示錯誤信息
@@ -914,6 +912,26 @@ function transTXT(tit,txt){
 	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	var dataToSend = "tit=" + encodeURIComponent(tit) + "&txt=" + encodeURIComponent(txt);
 	xhr.send(dataToSend);
+
+	xhr.onreadystatechange = function() {
+
+	if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+		// 在這裡處理回應
+
+		if (xhr.status === 200) {
+
+			// 狀態碼200表示成功
+			var response = JSON.parse(xhr.responseText); // 解析JSON回應
+			var datas = response.datas;
+			generateCards(datas['items']);
+			
+			
+		} else {
+			// 處理錯誤，例如顯示錯誤信息
+			console.error('發生錯誤，狀態碼：' + xhr.status);
+		}
+	}
+	};
 
 }
 
