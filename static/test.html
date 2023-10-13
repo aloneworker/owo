@@ -1,34 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自定义确认框</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* CSS樣式 */
+        body {
+            text-align: center;
+        }
+
+        #container {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        #image {
+            max-width: 100%;
+            height: auto;
+        }
+
+        #text-box {
+            width: 100%;
+            padding: 20px;
+            font-size: 18px;
+        }
+
+        #button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <div class="modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">自定义标题</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    这是自定义确认框的内容。
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                </div>
-            </div>
+    <div id="container">
+        <img id="image" src="your_image.jpg" alt="Your Image">
+        <div id="text-box">
+            <input type="text" placeholder="輸入文字...">
+        </div>
+        <div id="button-container">
+            <button class="button" onclick="leftButtonClick()">左側按鈕</button>
+            <button class="button" onclick="rightButtonClick()">右側按鈕</button>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function leftButtonClick() {
+            // 左側按鈕被點擊時的動作
+            alert("左側按鈕被點擊了！");
+        }
+
+        function rightButtonClick() {
+            // 右側按鈕被點擊時的動作
+            alert("右側按鈕被點擊了！");
+        }
+    </script>
 </body>
 </html>
