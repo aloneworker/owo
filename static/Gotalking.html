@@ -888,6 +888,7 @@ function transTodo(tit,done){
 			// 狀態碼200表示成功
 			var response = JSON.parse(xhr.responseText); // 解析JSON回應
 			var datas = response.datas;
+			alert('OKK');
 			generateCards(datas['items']);
 			 
 			  
