@@ -89,7 +89,7 @@ class selFs(BASE):
 
 class HI(BASE):
     def OUT(self,param=None):
-       self.step += 1
+       self.over = True
        return ['HI'] 
     def setSTEPOP(self):
         self.STEPOP = [self.OUT]
