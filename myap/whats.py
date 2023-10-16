@@ -103,7 +103,7 @@ class Qs(BASE):
         self.STEPOP = [self.showQ]
 
     def showQ(self,param):
-        qs = bulletNotemodel.object.filter(title='Q')
+        qs = bulletNotemodel.objects.filter(title='Q')
         for q in qs :
             print(q.title)
         return ['showQ']
