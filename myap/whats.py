@@ -94,6 +94,23 @@ class HI(BASE):
     def setSTEPOP(self):
         self.STEPOP = [self.OUT]
 
+
+class Qs(BASE):
+    def __init__(self):
+        super().__init__()
+
+    def setSTEPOP(self):
+        self.STEPOP = [self.showQ]
+
+    def showQ(self,param):
+        qs = bulletNotemodel.object.filter(title='Q')
+        for q in qs :
+            print(q.title)
+        return ['showQ']
+   
+
+
+
 class NOTEING(BASE):
     def __init__(self):
         super().__init__()
