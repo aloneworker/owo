@@ -62,7 +62,7 @@ class oWo_:
              
             if self.topic is None:
                
-                if user_input[0] == 'Q' or user_input[0] == 'q':
+                if user_input[0] == '@':
                     topic = ADDTODO()
                     chat_what = topic.OP(user_input[1:])
                 
