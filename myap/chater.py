@@ -13,7 +13,7 @@ from django.http import  HttpResponseRedirect
 from django.contrib import auth
 
 WHATS = {'HI':HI ,'TD':TODOs,'dowhat':SHOWTODO ,'boring':BORING,'sf':selFs,'找點事做!':BORING,
-         'note':NOTEING}
+         'note':NOTEING,'Qs':Qs}
 SAYS = {'?':['不懂？','什麼？','？？？']}
 
  
