@@ -210,9 +210,25 @@ body {
 	   .dialog-button:hover {
 		   background-color: #153a3b; /* 鼠标悬停时的背景颜色 */
 	   }
+        .floating-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            font-size: 24px;
+            cursor: pointer;
+        }
 
-
-
+.hidden-div {
+	position: fixed;
+            display: none;
+        }
 
 		</style>
 		<script>
@@ -220,7 +236,12 @@ body {
 		</script>
 	</head>
 	<body>
-
+	
+	<div class="floating-button" id="floating-button">
+        		<i class="fa fa-comment"></i>
+    	</div>
+    
+	<div class="hidden-div" id="hidden-div">
 		<!-- 对话框容器 -->
 		<div id="dialog-box">
 			<!-- 标题输入区域 -->
@@ -236,7 +257,8 @@ body {
 			</div>
 		</div>
 		<!-- 对话框容器 -->
-
+    	
+	
 
 
 
@@ -258,6 +280,7 @@ body {
 				</div>
 			</div>
 		</div>
+		</div>
 		<div id="todocardContainer"></div>
 
 
@@ -266,6 +289,10 @@ body {
 		<div class = "day-card" id="daycardContainer"></div>
 
 		<script >
+	
+
+
+
 			function sentTodjango(title,text)
 		{
 
@@ -387,6 +414,22 @@ body {
 
 document.addEventListener("DOMContentLoaded", function() {
 
+	document.getElementById("floating-button").addEventListener("click", function() {
+		var element = document.getElementById("hidden-div"); // 替换成您要检查的元素的ID
+
+		if (window.getComputedStyle(element).display === "none") {
+    			// 元素是隐藏的
+    			//console.log("元素是隐藏的");
+			document.getElementById("hidden-div").style.display = "block";
+		} else {
+    			// 元素是可见的
+    			//console.log("元素是可见的");
+
+			document.getElementById("hidden-div").style.display = "none";
+		}
+
+
+	});
 
 
 

@@ -1,63 +1,91 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>簡單的對話框網頁</title>
     <style>
-        /* CSS樣式 */
         body {
+            font-family: Arial, sans-serif;
             text-align: center;
         }
-
         #container {
-            width: 80%;
+            max-width: 600px;
             margin: 0 auto;
-        }
-
-        #image {
-            max-width: 100%;
-            height: auto;
-        }
-
-        #text-box {
-            width: 100%;
             padding: 20px;
-            font-size: 18px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
-
-        #button-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
+        #chat-box {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            overflow-y: auto;
         }
-
-        .button {
-            padding: 10px 20px;
-            font-size: 16px;
+        #message-input {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #send-button {
+            width: 150px;
+            padding: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
         }
     </style>
 </head>
 <body>
     <div id="container">
-        <img id="image" src="your_image.jpg" alt="Your Image">
-        <div id="text-box">
-            <input type="text" placeholder="輸入文字...">
-        </div>
-        <div id="button-container">
-            <button class="button" onclick="leftButtonClick()">左側按鈕</button>
-            <button class="button" onclick="rightButtonClick()">右側按鈕</button>
-        </div>
+        <div id="chat-box"></div>
+        <input type="text" id="message-input" placeholder="輸入訊息">
+        <button id="send-button" onclick="sendMessage()">發送</button>
     </div>
 
     <script>
-        function leftButtonClick() {
-            // 左側按鈕被點擊時的動作
-            alert("左側按鈕被點擊了！");
-        }
+        function sendMessage() {
+            var messageInput = document.getElementById("message-input");
+            var chatBox = document.getElementById("chat-box");
+            var message = messageInput.value;
 
-        function rightButtonClick() {
-            // 右側按鈕被點擊時的動作
-            alert("右側按鈕被點擊了！");
+            if (message.trim() !== "") {
+                // 將訊息附加到對話框
+                chatBox.innerHTML += "<p>" + message + "</p>";
+
+                // 清空輸入框
+                messageInput.value = "";
+
+                // 滾動到最新消息
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
         }
+	function sendMessage() {
+		var message = document.getElementById("message-input").value;
+
+		if (message.trim() !== "") {
+		    var xhr = new XMLHttpRequest();
+		    xhr.open("POST", "/receive_message/", true);
+		    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		    xhr.send("message=" + encodeURIComponent(message));
+
+		    xhr.onreadystatechange = function () {
+			if (xhr.readyState === 4 && xhr.status === 200) {
+			    // 處理成功的回應
+			    console.log("訊息已成功發送");
+			} else if (xhr.status !== 200) {
+			    // 處理錯誤的回應
+			    console.error("訊息發送失敗");
+			}
+		    };
+		}
+	}
+
+
     </script>
 </body>
 </html>
+
