@@ -83,6 +83,9 @@ def saveTodos(request):
     else:
         return JsonResponse({'message': '只接受POST请求','datas':datas}, status=405)
 
+def addTH(request):
+    return render(request, 'addTH.html' )
+
 
 def log_out(request):
     auth.logout(request)
@@ -113,7 +116,6 @@ def getSameDate():  #把資料輸出 [日期,A抬頭.A,B抬頭.B]
         return context
  
 def load_chat_html( request):
-    
     return render(request, 'chat.html',{'inits':person.showCharact()} )
  
 WHATS = {'HI':HI ,'TD':TODOs,'dowhat':SHOWTODO ,'boring':BORING,'sf':selFs}

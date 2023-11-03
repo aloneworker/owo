@@ -10,7 +10,6 @@ from django.contrib import auth
 
 
 def getSameDate():  #把資料輸出 [日期,A抬頭.A,B抬頭.B]
-        
         items = []
         data = bulletNotemodel.objects.order_by('date')
         for key,group in groupby(data,key=attrgetter('date')):
@@ -250,6 +249,23 @@ class doSomething(BASE):
         
         
         return ['|'+what]    
+
+class ADDTHI(BASE):
+    def __init__(self):
+        super().__init__()
+
+
+    def setSTEPOP(self):
+        self.STEPOP = [self.adding]
+
+
+    def adding(self,param):
+        today = datetime.datetime.now()
+        today = today.strftime('%Y-%m-%d')
+        tod = bulletNotemodel(title='思',date=today,content=param,)
+        tod.save()
+        return [param+'加入！！']
+
 
 class ADDTODO(BASE):
     def __init__(self):

@@ -13,8 +13,8 @@ import sys
 from django.core.wsgi import get_wsgi_application
 
 # 設定 Python 環境路徑
-sys.path.append('home/pi/OwO/Owo/')
-sys.path.append('home/pi/OwO/Owo/Owo/')
+sys.path.append('~/owo/')
+sys.path.append('~/owo/Owo/')
 
 # 設定 Django settings 模組
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Owo.settings')
