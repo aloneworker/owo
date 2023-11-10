@@ -12,8 +12,9 @@ from .PERSONS import Person
 from django.http import  HttpResponseRedirect
 from django.contrib import auth
 
-WHATS = {'HI':HI ,'TD':TODOs,'dowhat':SHOWTODO ,'boring':BORING,'sf':selFs,'找點事做!':BORING,
-         'note':NOTEING}
+WHATS = {'HI':HI ,'TD':TODOs,'dowhat':SHOWTODO
+         ,'boring':BORING,'sf':selFs,'發呆':seeWhat,
+         'note':NOTEING,'test':seeWhat}
 SAYS = {'?':['不懂？','什麼？','？？？']}
 
  
@@ -29,7 +30,7 @@ class oWo_:
 
     def start(self,request):
         if request.user.is_authenticated:
-            return render(request, 'Gotalking.html',{'OPEs':['HI','找點事做!']})
+            return render(request, 'Gotalking.html',{'OPEs':['HI','發呆']})
         return HttpResponseRedirect('/')
 
     def noteSAVE(self,request):
@@ -53,38 +54,38 @@ class oWo_:
                 else :
                     chat_what = self.topic.OP(user_input)
             if self.topic is None:
-                if user_input[0] == 'Q' or user_input[0] == 'q':
-                    topic = ADDTODO()
-                    chat_what = topic.OP(user_input[1:])
-                    return JsonResponse({'response': chat_what,'datas':datas})
-                if user_input[0] == '⠖' :
-                    obj = user_input[1:]
-                    if obj == '' :
-                        return
-                    topic = ADDTHI()
-                    chat_what = topic.OP(obj)
-                    return  JsonResponse({'response': chat_what,'datas':datas})
+                if user_input != '' :
+                    if user_input[0] == 'Q' or user_input[0] == 'q':
+                        topic = ADDTODO()
+                        chat_what = topic.OP(user_input[1:])
+                        return JsonResponse({'response': chat_what,'datas':datas})
+                    if user_input[0] == '@' :
+                        obj = user_input[1:]
+                        if obj == '' :
+                            return
+                        topic = ADDTHI()
+                        chat_what = topic.OP(obj)
+                        return  JsonResponse({'response': chat_what,'datas':datas})
 
 
-                if user_input == 'logout':
-                    auth.logout(request)
-                    chat_what = ['登出！！']
+                    if user_input == 'logout':
+                        auth.logout(request)
+                        chat_what = ['登出！！']
 
-                elif user_input[0] == '.' :
-                    topic = ADDLOG()
-                    chat_what = topic.OP(user_input[1:])
+                    elif user_input[0] == '.' :
+                        topic = ADDLOG()
+                        chat_what = topic.OP(user_input[1:])
 
-                elif user_input in WHATS :
-                    WH = WHATS[user_input]
-                    self.topic = WH()
-                    chat_what = self.topic.OP(user_input)
-                else :
-                    says = SAYS['?']
-                    waaa = random.choice(says) 
-                    chat_what.append(waaa)
- 
-                    return JsonResponse({'response': chat_what,'datas':datas})
-
+                    elif user_input in WHATS :
+                        WH = WHATS[user_input]
+                        self.topic = WH()
+                        chat_what = self.topic.OP(user_input)
+                    else :
+                        says = SAYS['?']
+                        waaa = random.choice(says) 
+                        chat_what.append(waaa)
+     
+                        return JsonResponse({'response': chat_what,'datas':datas})
             # 假設chat_what是由AI模型回傳的回覆
             return JsonResponse({'response': chat_what,'datas':datas})
     

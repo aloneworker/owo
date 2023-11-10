@@ -17,15 +17,12 @@ def getSameDate():  #把資料輸出 [日期,A抬頭.A,B抬頭.B]
             for g in group:
                 st = '['+g.title+'] '+g.content
                 datal.append(st)
-            
             key = key.strftime("%Y-%m-%d")
             datal.append(key)
             datal.reverse()
 
             items.append(datal)
-   
-         
-        items.reverse() 
+        items.reverse()
         context = {
                 'items':items
             }
@@ -44,20 +41,16 @@ class BASE:
     def __init__(self):
         self.step = 0
         self.STEPOP = []
-        self.over = False 
+        self.over = False
         self.setSTEPOP()
-        
- 
+
     def setSTEPOP(self):
         pass
- 
     def OP(self,param=None):
         if self.step < len(self.STEPOP):
             OP = self.STEPOP[self.step]
- 
             self.step += 1
             return OP(param)
-        
         self.over = True
         return ['.....']
 
@@ -103,7 +96,6 @@ class NOTEING(BASE):
     def showNOTE(self,param):
         self.over = True
         return ['showNOTE|0']
-    
 
 
 class EARN(BASE):
@@ -117,7 +109,6 @@ class EARN(BASE):
  
         pass
         return [param+'加入！！']
-    
 
 
 class ADDNote(BASE):
@@ -135,7 +126,6 @@ class ADDNote(BASE):
 class SHOWTODO(BASE):
     def __init__(self):
         super().__init__()
-                
  
     def setSTEPOP(self):
         self.STEPOP = [self.Q,self.showDo]
@@ -155,7 +145,7 @@ class SHOWTODO(BASE):
             return ['沒有工作喔！！']
 
         return item
-    
+
 class BORING(BASE):
     def __init__(self):
         super().__init__()
@@ -262,7 +252,7 @@ class ADDTHI(BASE):
     def adding(self,param):
         today = datetime.datetime.now()
         today = today.strftime('%Y-%m-%d')
-        tod = bulletNotemodel(title='思',date=today,content=param,)
+        tod = bulletNotemodel(title='思',date=today,content=param,order=2)
         tod.save()
         return [param+'加入！！']
 
@@ -324,7 +314,6 @@ class ADDLOG(BASE):
         talking = [random.choice(talks)]
         talking.append('好的！我幫你加入手帳')
         return [talking]
-    
 
 class TODOs(BASE):
     def __init__(self):
@@ -386,12 +375,97 @@ class TODOs(BASE):
         else :
             self.over = True
             talks.append(['設定完成！！可喜可賀'])
-        
         return talks
- 
- 
-        
 
 
     def isOver(self):
-        return self.over 
+        return self.over
+
+
+
+class seeWhat(BASE):
+    def __init__(self):
+        today = datetime.datetime.now().strftime("%Y-%m-%d")
+        self.items = bulletNotemodel.objects.filter(title='思')
+        self.itemStep = 0
+        super().__init__()
+
+    def setSTEPOP(self):
+        if len(self.items) < 1 :
+            self.STEPOP = [self.NOTODO]
+        else :
+            self.STEPOP = [self.star,self.OP1]
+
+    def NOTODO(self,param):
+        self.over = True 
+        return ['NO work!!'] 
+
+    def star(self,param):
+        return ['開始!!! y:star ']
+    def OP1(self,param):
+        if param == 'y' or param == 'yes' :
+            item = self.items[self.itemStep]
+            self.STEPOP.append(self.OP2)
+            return ['['+item.content+'] 放入[1:可以做,3:以後] or d:分？']
+        else :
+            self.over = True
+            return ['好吧！下次見 ！！']
+
+    def OP2(self,param):
+        item = self.items[self.itemStep]
+        if param == '1' or param == '3' :
+            if param == '1' :
+                item.title = 'Q'
+            elif param == '3' :
+                item.title = '夢'
+            item.order = param
+            item.save()
+            self.itemStep += 1
+            if self.itemStep < len(self.items) :
+                self.STEPOP.append(self.OP1)
+                return ['ok! 下一個 y?']
+            else :
+                return ['今天沒有需要思考的了！！']
+        elif param == 'd' :
+            self.STEPOP.append(self.DEP)
+            return ['[{}] 分出來的係項目名?'.format(item.content)]
+
+    def DEP(self,param):
+        item = self.items[self.itemStep]
+        today = datetime.datetime.now()
+        today = today.strftime('%Y-%m-%d')
+        content = '{}|{}'.format(item.content,param)
+        tod = bulletNotemodel(title='思',date=today,content=content,order=2)
+        tod.save()
+        self.STEPOP.append(self.depEnd)
+        return [['分出 {}'.format(content)],['繼續分？']]
+
+    def depEnd(self,param):
+        item = self.items[self.itemStep]
+        if param == 'y':
+            self.STEPOP.append(self.DEP)
+            return ['[{}] 分出來的輸入項目稱'.format(item.content)]
+        else :
+            self.STEPOP.append(self.depItemOp)
+            return ['[{}] 項目結束？ y or n'.format(item.content)]
+
+    def depItemOp(self,param):
+        chats = []
+        if param == 'y' :
+            item = self.items[self.itemStep]
+            item.delete()
+            self.itemStep += 1
+            self.STEPOP.append(self.OP1)
+            chats.append(['[{}] 項目結束！'.format(item.content)])
+        self.itemStep += 1
+        if self.itemStep > len(self.items) :
+            return ['今天就到這裡吧！！']
+        self.STEPOP.append(self.OP1)
+        chats.append('繼續下一個！！ y?')
+        return chats
+
+    def isOver(self):
+        return self.over
+
+
+

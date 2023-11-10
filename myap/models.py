@@ -27,13 +27,12 @@ class toDomodel(models.Model):
 
 
 class bulletNotemodel(models.Model):
- 
     title = models.CharField(max_length=2)
     content = models.TextField()
     date = models.DateField(null=True, blank=True)
     done = models.CharField(max_length=1)
     txt = models.TextField( default='', blank=True)
-    order = models.CharField(max_length=3,default=0)
+    order = models.CharField(max_length=3,default=0) #0:ju 1:todo 2:th 3:deep 4
     tags = models.ManyToManyField(Tag)
     checkDa = models.DateField(null=True, blank=True)
     def __str__(self):
