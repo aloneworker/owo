@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #cardContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            text-align: left;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #buttonContainer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #f1f1f1;
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            #buttonContainer {
+                align-items: center;
+            }
+        }
+
+
+    </style>
+    <title>Responsive and Centered Card Display</title>
+</head>
+<body>
+
+<div id="cardContainer"></div>
+
+<script>
+    // Sample list of data
+    var dataList = [
+        {  content: "This is the content of Card 1." },
+        {  content: "This is the content of Card 2." },
+        {  content: "This is the content of Card 3." }
+        // Add more data as needed
+    ];
+
+    // Function to create a card and append it to the container
+    function createCard(data) {
+        var card = document.createElement("div");
+        card.className = "card";
+        card.textContent = data.content ;
+	card.addEventListener("click",function(){
+		cardActive(card);
+	});
+	document.getElementById("cardContainer").appendChild(card);
+    }
+
+    // Function to display cards
+    function displayCards(dataList) {
+        for (var i = 0; i < dataList.length; i++) {
+            createCard(dataList[i]);
+        }
+    }
+    function cardActive(card){
+    	creatButtons();
+    }
+    displayCards(dataList);
+
+   function creatButtons(){
+            // Create container div
+        const container = document.createElement('div');
+        container.className = 'container';
+        document.body.appendChild(container);
+
+        // Create buttons container div
+        const buttonContainer = document.createElement('div');
+        buttonContainer.id = 'buttonContainer';
+        document.body.appendChild(buttonContainer);
+
+        // Create buttons and append to buttons container
+        for (let i = 1; i <= 3; i++) {
+            const button = document.createElement('button');
+            button.textContent = 'Button ' + i;
+            button.addEventListener('click', function() {
+                buttonClick( buttonContainer,i);
+            });
+            buttonContainer.appendChild(button);
+        }
+   }
+        function buttonClick(buttonContainer,buttonNumber) {
+            alert('Button ' + buttonNumber + ' clicked!');
+	    buttonContainer.style.display = 'none' ;
+            // Add your custom logic here
+        }
+</script>
+
+</body>
+</html>
+
