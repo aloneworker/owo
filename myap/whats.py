@@ -434,7 +434,7 @@ class seeWhat(BASE):
         item = self.items[self.itemStep]
         today = datetime.datetime.now()
         today = today.strftime('%Y-%m-%d')
-        content = '{}|{}'.format(item.content,param)
+        content = '({}){}'.format(item.content,param)
         tod = bulletNotemodel(title='思',date=today,content=content,order=2)
         tod.save()
         self.STEPOP.append(self.depEnd)
@@ -458,7 +458,7 @@ class seeWhat(BASE):
             self.STEPOP.append(self.OP1)
             chats.append(['[{}] 項目結束！'.format(item.content)])
         self.itemStep += 1
-        if self.itemStep > len(self.items) :
+        if self.itemStep >= len(self.items) :
             return ['今天就到這裡吧！！']
         self.STEPOP.append(self.OP1)
         chats.append('繼續下一個！！ y?')
