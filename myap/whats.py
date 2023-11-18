@@ -406,7 +406,7 @@ class seeWhat(BASE):
         if param == 'y' or param == 'yes' :
             item = self.items[self.itemStep]
             self.STEPOP.append(self.OP2)
-            return ['['+item.content+'] 放入[1:可以做,3:以後] or d:分？']
+            return ['['+item.content+'] [1:可以做,2:PASS,3:以後 4:分]']
         else :
             self.over = True
             return ['好吧！下次見 ！！']
@@ -426,9 +426,17 @@ class seeWhat(BASE):
                 return ['ok! 下一個 y?']
             else :
                 return ['今天沒有需要思考的了！！']
-        elif param == 'd' :
+        elif param == '4' :
             self.STEPOP.append(self.DEP)
             return ['[{}] 分出來的係項目名?'.format(item.content)]
+        elif param == '2' :
+            pass
+        self.itemStep += 1
+        if self.itemStep < len(self.items) :
+            self.STEPOP.append(self.OP1)
+            return ['ok! 下一個 y?']
+        else :
+            return ['今天沒有需要思考的了！！']
 
     def DEP(self,param):
         item = self.items[self.itemStep]
@@ -454,10 +462,8 @@ class seeWhat(BASE):
         if param == 'y' :
             item = self.items[self.itemStep]
             item.delete()
-            self.itemStep += 1
             self.STEPOP.append(self.OP1)
             chats.append(['[{}] 項目結束！'.format(item.content)])
-        self.itemStep += 1
         if self.itemStep >= len(self.items) :
             return ['今天就到這裡吧！！']
         self.STEPOP.append(self.OP1)
