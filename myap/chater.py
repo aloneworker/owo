@@ -14,7 +14,7 @@ from django.contrib import auth
 
 WHATS = {'HI':HI ,'TD':TODOs,'dowhat':SHOWTODO
          ,'boring':BORING,'sf':selFs,'發呆':seeWhat,
-         'note':NOTEING,'test':seeWhat}
+         'note':NOTEING,'test':seeWhat,'zzz':seeWhat}
 SAYS = {'?':['不懂？','什麼？','？？？']}
 
  
