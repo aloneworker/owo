@@ -40,6 +40,9 @@ urlpatterns += [
     path('saveNotes/',views.saveNotes,name='saveNotes'),
     path('saveTodos/',views.saveTodos,name="saveTodos"),
     path('addTH/',views.addTH,name='addTH'),
+    path('notes/',views.notes,name='notes'),
+
+
     #path('whats/',views.whats),
     #path('lognote/',views.lognote),
     #path('todo/check',views.check,name='check')

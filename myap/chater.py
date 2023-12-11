@@ -67,6 +67,15 @@ class oWo_:
                         chat_what = topic.OP(obj)
                         return  JsonResponse({'response': chat_what,'datas':datas})
 
+                    if user_input[0] == '#' :
+                        obj = user_input[1:]
+                        if obj == '' :
+                            return  JsonResponse({'response': chat_what,'datas':datas})
+
+                        topic = ADDEVENT()
+                        topic.OP(obj)
+                        return  JsonResponse({'response': chat_what,'datas':datas})
+
 
                     if user_input == 'logout':
                         auth.logout(request)

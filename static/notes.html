@@ -1,0 +1,120 @@
+{% extends 'bootest.html'%}
+{% block title %} 本 {% endblock %}
+{% block styles %}
+{% endblock %}
+
+{% block content %}
+<script>
+
+
+
+
+
+function showNote(param){
+    var Data = {'title':param};
+    $.ajax({
+	type:'POST',
+	url:'/getNotes/',
+    dataType:'json',
+	data:Data,
+	success:function(response){
+        datas = response.datas
+        $("#noteTitle").val(datas.title);
+        $("#notes").val(datas.txt);
+        $("#dates").text(datas.date).hide();
+    },
+	error:function(response){}
+
+	});
+
+
+}
+
+</script>
+
+
+
+<div class="content ">
+{% for item in datas.items %}
+
+
+<div class="card" >
+  <div class="card-body">
+      <h5 class="card-title" id="date">{{item.0}}</h5>
+      {% for what in item|slice:"1:"%}
+        {% if what.typs == "bg-primary" %}
+            <p class="card-text" onclick="showNote('{{what.title}}' )"  data-bs-toggle="modal" data-bs-target="#noteModal"><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
+        {% else %}
+            <p class="card-text"><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
+        {% endif %}
+      {% endfor %}
+  </div>
+</div>
+
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <div class="input-group border-0 ">
+                    <span class="input-group-text  border-0 " id="basic-addon1">題</span>
+                    <input type="text" class="form-control  border-0 " placeholder="....." aria-label="Username" aria-describedby="basic-addon1" id="noteTitle">
+                </div>
+            </div>
+            <div class="modal-body ">
+                <textarea class="form-control border-0" id="notes" rows="3"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="noteIn">IN</button>
+            </div>
+            <p id='dates'></p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+{% endfor %}
+</div>
+
+
+
+{% endblock %}
+
+{% block scripts %}
+
+$("#noteIn").click(function (){
+  var date = $("#dates").text();
+  var title = $("#noteTitle").val();
+  var txt = $("#notes").val();
+  console.log(title);
+  console.log(txt);
+  console.log(date);
+  const Data = {'tit':title,'txt':txt,'date':date};
+
+
+    $.ajax({
+	type:'POST',
+	url:'/saveNotes/',
+    dataType:'json',
+	data:Data,
+	success:function(response){},
+	error:function(response){}
+	});
+
+
+
+
+
+});
+
+{% endblock %}
+ 
+
