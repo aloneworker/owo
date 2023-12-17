@@ -34,8 +34,10 @@ def login(request):
 def notes(request):
     datas = getAllnotes()
     return render(request, 'notes.html',{'datas':datas})
-
-
+def curseBook(request):
+    return render(request, 'curseBook.html')
+def main(request):
+    return render(request,'main.html')
 def getTodos(request):
     if request.method == 'POST':
         title = request.POST.get('title')

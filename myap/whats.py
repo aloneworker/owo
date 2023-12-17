@@ -10,9 +10,9 @@ from django.contrib import auth
 
 def getAllnotes():  #把資料輸出 [日期,A抬頭.A,B抬頭.B]
         items = []
-        typs = {'誌':'bg-info','[誌]':'bg-info','@':'bg-warning'
+        typs = {'誌':'bg-info','[誌]':'bg-info','@':'bg-success'
                 ,'Q':'bg-danger','#':'bg-danger','完':'bg-secondary'
-                ,'完成':'bg-secondary','Note':'bg-primary'}
+                ,'完成':'bg-secondary','Note':'bg-primary','咒':'bg-warning'}
         data = bulletNotemodel.objects.order_by('date')
         for key,group in groupby(data,key=attrgetter('date')):
             datal = []
@@ -122,6 +122,47 @@ class NOTEING(BASE):
     def showNOTE(self,param):
         self.over = True
         return ['showNOTE|0']
+
+class whatNotes(BASE):
+    def __init__(self):
+        super().__init__()
+
+    def setSTEPOP(self):
+        self.STEPOP = [self.processNote]
+
+    def processNote(uself,param):
+        items = []
+        key = param.split('.')
+        typs = {'誌':'bg-info','[誌]':'bg-info','@':'bg-warning'
+                ,'Q':'bg-danger','#':'bg-danger','完':'bg-secondary'
+                ,'完成':'bg-secondary','Note':'bg-primary'}
+        if len(key) == 1 :
+            data = bulletNotemodel.objects.order_by('date').filter(title=key[0])
+        elif len(key) == 2 :
+            data=bulletNotemodel.objects.order_by('date').filter(Q(title=key[0])&Q(content=key[1]))
+        elif len(key) == 3 :
+            data=bulletNotemodel.objects.order_by('date').filter(Q(title=key[0])&Q(content=key[1])&Q(txt__icontains=key[2]))
+
+        for key,group in groupby(data,key=attrgetter('date')):
+            datal = []
+            for g in group:
+                data_d = {}
+                data_d['tag']=g.title
+                data_d['typs'] = typs[g.title]
+                data_d['title']=g.content
+                datal.append(data_d)
+            key = key.strftime("%Y-%m-%d")
+            datal.append(key)
+            datal.reverse()
+
+
+            items.append(datal)
+        items.reverse()
+        context = {
+                'items':items
+            }
+        return context
+
 
 
 class EARN(BASE):
@@ -294,7 +335,7 @@ class ADDEVENT(BASE):
     def addEVE(self,param):
         today = datetime.datetime.now()
         today = today.strftime('%Y-%m-%d')
-        tod = bulletNotemodel(title='#',date=today,content=param,)
+        tod = bulletNotemodel(title='Q',date=today,content=param,)
         tod.save()
         return [param+'加入代辦事項了！！']
 

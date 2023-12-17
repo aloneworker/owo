@@ -1,14 +1,18 @@
+
 {% extends 'bootest.html'%}
+
 {% block title %} 本 {% endblock %}
 {% block styles %}
-{% endblock %}
 
+{% endblock %}
 {% block content %}
 <script>
 
 
-
-
+function showCurse(param)
+{
+ $("#cur").text(param);    
+}
 
 function showNote(param){
     var Data = {'title':param};
@@ -30,27 +34,70 @@ function showNote(param){
 
 }
 
+
 </script>
 
 
-
-<div class="content ">
+<div class="content px-4 " id = "lis">
 {% for item in datas.items %}
-
-
-<div class="card" >
+<div class="card" id="boad" >
   <div class="card-body">
       <h5 class="card-title" id="date">{{item.0}}</h5>
       {% for what in item|slice:"1:"%}
         {% if what.typs == "bg-primary" %}
-            <p class="card-text" onclick="showNote('{{what.title}}' )"  data-bs-toggle="modal" data-bs-target="#noteModal"><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
+            <p class="card-text" onclick="showNote('{{what.title}}' )" 
+            data-bs-toggle="modal" data-bs-target="#noteModal"><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
+        
+        {% elif what.tag == "#" or what.tag == "Q" %}
+        <p class="card-text"  onclick="showCurse('{{what.title}}')" data-bs-toggle="modal" data-bs-target="#eveModal"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
+      
+         <!-- <p class="card-text" data-bs-toggle="modal" data-bs-target="#eveModal{{what.title}}"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>-->
+<!-- Modal -->
+        {% elif what.tag == "@"%}
+        <p class="card-text" onclick="showThink({{what.title}})"  data-bs-toggle="modal" data-bs-target="#thinkModal"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
+
         {% else %}
             <p class="card-text"><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
         {% endif %}
       {% endfor %}
+</div>
+</div>
+
+
+
+{% endfor %}
+</div>
+
+
+<!---- modal --->
+<div class="modal fade" id="eveModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content ">
+      <div class="modal-body text-center ">
+        <!-- 按鈕和標籤 -->
+        <button type="button" id="curseTo" class="btn btn-secondary" data-bs-dismiss="modal">咒</button>
+        <span id="cur"></span>
+        <button type="button" id="curseDele"class="btn btn-primary" id="curse-dele" data-bs-dismiss="modal">刪除</button>
+      </div>
+    </div>
   </div>
 </div>
 
+
+
+<!---- modal --->
+<div class="modal fade" id="thinkModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content ">
+      <div class="modal-body text-center ">
+        <!-- 按鈕和標籤 -->
+        <button type="button" id="curseTo" class="btn btn-secondary" data-bs-dismiss="modal">咒</button>
+        <span id="think"></span>
+        <button type="button" id="curseDele"class="btn btn-primary" id="curse-dele" data-bs-dismiss="modal">刪除</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -78,25 +125,13 @@ function showNote(param){
 
 
 
-
-
-
-{% endfor %}
-</div>
-
-
-
 {% endblock %}
 
 {% block scripts %}
-
 $("#noteIn").click(function (){
   var date = $("#dates").text();
   var title = $("#noteTitle").val();
   var txt = $("#notes").val();
-  console.log(title);
-  console.log(txt);
-  console.log(date);
   const Data = {'tit':title,'txt':txt,'date':date};
 
 
@@ -109,12 +144,49 @@ $("#noteIn").click(function (){
 	error:function(response){}
 	});
 
-
-
-
-
 });
+
+$("#curseDele").click(function(){
+    var curses = $("#cur").text();
+    console.log(curses);
+    curses = "☞"+curses ;
+    const Data = {'talks':curses}
+    $.ajax({
+	type:'POST',
+	url:'/talking/',
+    dataType:'json',
+	data:Data,
+	success:function(response){
+        alert(response.response);
+        location.reload();
+    },
+	error:function(response){}
+	});
+ 
+});
+
+$("#curseTo").click(function(){
+    var curses = $("#cur").text();
+    curses = "^"+curses ;
+    const Data = {'talks':curses}
+    $.ajax({
+	type:'POST',
+	url:'/talking/',
+    dataType:'json',
+	data:Data,
+	success:function(response){
+        alert(response.response);
+        location.reload();
+    },
+	error:function(response){}
+	});
+  
+});
+
 
 {% endblock %}
  
-
+{% block talkreact %}
+location.reload();
+{% endblock %}
+ 
