@@ -17,11 +17,8 @@ WHATS = {'HI':HI ,'TD':TODOs,'dowhat':SHOWTODO
          'note':NOTEING,'test':seeWhat,'zzz':seeWhat}
 SAYS = {'?':['不懂？','什麼？','？？？']}
 
- 
-
 
 person = Person() 
- 
 
 
 class oWo_:
@@ -47,7 +44,8 @@ class oWo_:
         self.saveCurse()
 
 
-
+    def reflashBook(self):
+        self.notes = getAllnotes()
 
 
     def saveCurse(self):
@@ -118,6 +116,7 @@ class oWo_:
                     if user_input[0] == 'Q' or user_input[0] == 'q':
                         topic = ADDTODO()
                         chat_what = topic.OP(user_input[1:])
+                        self.reflashBook()
                         return JsonResponse({'response':
                                              chat_what,'datas':self.notes})
                     if user_input[0] == '@' :
@@ -126,6 +125,7 @@ class oWo_:
                             return
                         topic = ADDTHI()
                         chat_what = topic.OP(obj)
+                        self.reflashBook()
                         return  JsonResponse({'response': chat_what,'datas':datas})
                     elif user_input[0] == '^':
                         obj = user_input[1:]
@@ -159,7 +159,8 @@ class oWo_:
                     elif user_input[0] == '✔':
                         obj = user_input[1:]
                         curse =bulletNotemodel.objects.get(Q(content=obj)&Q(title='咒'))
-                        curse.delete()
+                        curse.title ='完成'
+                        curse.save()
                         self.curses.remove(obj)
                         point = random.randint(4,12)
                         self.cursePowerchange(point)

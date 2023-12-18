@@ -34,6 +34,12 @@ function showNote(param){
 
 }
 
+function showThink(param){
+    var data = param ;
+    $(".departTxt").html('<span class="badge bg-success">空想</span> <span id="think">'+ param+"</span>");
+
+
+}
 
 </script>
 
@@ -54,7 +60,7 @@ function showNote(param){
          <!-- <p class="card-text" data-bs-toggle="modal" data-bs-target="#eveModal{{what.title}}"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>-->
 <!-- Modal -->
         {% elif what.tag == "@"%}
-        <p class="card-text" onclick="showThink({{what.title}})"  data-bs-toggle="modal" data-bs-target="#thinkModal"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
+        <p class="card-text" onclick="showThink('{{what.title}}')"  data-bs-toggle="modal" data-bs-target="#thinkModal"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
 
         {% else %}
             <p class="card-text"><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
@@ -83,22 +89,69 @@ function showNote(param){
   </div>
 </div>
 
-
-
 <!---- modal --->
-<div class="modal fade" id="thinkModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="thinkDepartModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
       <div class="modal-content ">
       <div class="modal-body text-center ">
-        <!-- 按鈕和標籤 -->
-        <button type="button" id="curseTo" class="btn btn-secondary" data-bs-dismiss="modal">咒</button>
-        <span id="think"></span>
-        <button type="button" id="curseDele"class="btn btn-primary" id="curse-dele" data-bs-dismiss="modal">刪除</button>
+        <!-- Depart and  -->
+        <button type="button" id="departTo" class="btn btn-secondary" data-bs-dismiss="modal">空想</button>
+        <span id="cur"></span>
+        <button type="button" id="eventTo"class="btn btn-primary" id="curse-dele" data-bs-dismiss="modal">事件
+        </button>
       </div>
     </div>
   </div>
 </div>
 
+
+
+<!----Think  modal --->
+<div class="modal fade" id="thinkModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content ">
+
+            <div class="modal-body text-center ">
+
+                <div class="alert alert-success departTxt" >
+                    <span class="badge bg-success">空想</span> ...................
+                </div>
+
+                <div class="p-3">        
+                    <button type="button" id="thinkDepart" class="btn btn-primary m-3 p-5"  data-bs-toggle="modal" data-bs-target="#deparThinkModal" >分</button>
+                    <button type="button" id="thinkDele"class="btn btn-secondary m-5 p-2" data-bs-dismiss="modal">刪</button>
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!----Depart  modal --->
+<div class="modal fade" id="deparThinkModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content ">
+            <div class="modal-body text-center ">
+
+
+                <div class="alert alert-success departTxt" id = "think">
+                    <span class="badge bg-success">空想</span> ...................
+                </div>
+
+                <div class="input-group mb-3">
+                    
+ <span class="input-group-text bg-success text-white " id="dpThink"data-bs-toggle="modal" data-bs-target="#thinkModal"> 空想 </span>
+                    <input type="text" id = "thinkWhat"  class="form-control"  aria-label="Recipient's username" aria-describedby="basic-addon2">
+                    <span class="input-group-text bg-danger text-white " id="dpEve"data-bs-toggle="modal" data-bs-target="#thinkModal"> 事件 </span></div>
+
+
+            </div>
+
+        </div> 
+    </div>
+</div>
+  </div>
+</div>
 
 
 
@@ -128,6 +181,63 @@ function showNote(param){
 {% endblock %}
 
 {% block scripts %}
+
+
+
+$("#dpThink").click(function (){
+
+    var what = $("#thinkWhat").val();
+    $("#thinkWhat").val('');
+    var think = $("#think").text();
+    what = '['+think+'] '+what;
+    $("#eventWhat").val('');
+    what = '@' + what;
+    var Data = {'talks':what};
+    $.ajax({
+	type:'POST',
+	url:'/talking/',
+    dataType:'json',
+	data:Data,
+	success:function(response){
+
+
+    },
+	error:function(response){}
+
+	});
+
+
+});
+
+$("#dpEve").click(function (){
+    var what = $("#thinkWhat").val();
+    $("#thinkWhat").val('');
+    var think = $("#think").text();
+    what = '['+think+'] '+what;
+    what = 'Q' + what;
+    var Data = {'talks':what};
+    $.ajax({
+        type:'POST',
+        url:'/talking/',
+        dataType:'json',
+        data:Data,
+	success:function(response){
+
+
+
+    },
+	error:function(response){}
+
+	});
+
+
+
+
+});
+
+
+
+
 $("#noteIn").click(function (){
   var date = $("#dates").text();
   var title = $("#noteTitle").val();
@@ -144,6 +254,24 @@ $("#noteIn").click(function (){
 	error:function(response){}
 	});
 
+});
+
+$("#thinkDele").click(function(){
+    var think = $("#think").text();
+    think = "☞"+think;
+    const Data = {'talks':think}
+    $.ajax({
+	type:'POST',
+	url:'/talking/',
+    dataType:'json',
+	data:Data,
+	success:function(response){
+        alert(response.response);
+        location.reload();
+    },
+	error:function(response){}
+	});
+ 
 });
 
 $("#curseDele").click(function(){

@@ -133,9 +133,9 @@ class whatNotes(BASE):
     def processNote(uself,param):
         items = []
         key = param.split('.')
-        typs = {'誌':'bg-info','[誌]':'bg-info','@':'bg-warning'
+        typs = {'誌':'bg-info','[誌]':'bg-info','@':'bg-success'
                 ,'Q':'bg-danger','#':'bg-danger','完':'bg-secondary'
-                ,'完成':'bg-secondary','Note':'bg-primary'}
+                ,'完成':'bg-secondary','Note':'bg-primary','咒':'bg-warning'}
         if len(key) == 1 :
             data = bulletNotemodel.objects.order_by('date').filter(title=key[0])
         elif len(key) == 2 :
