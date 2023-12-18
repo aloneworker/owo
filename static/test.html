@@ -1,53 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
 
-        header {
-            background-color: #333;
-            padding: 15px;
-            text-align: center;
-        }
-
-        nav {
-            display: flex;
-            justify-content: center;
-            background-color: #444;
-            padding: 1px;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            padding: 10px 10px;
-            margin: 0 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-        nav a:hover {
-            background-color: #555;
-        }
-    </style>
-</head>
-<body>
+<div class="content px-4 " id = "lis">
+{% for item in datas.items %}
+<div class="card" id="boad" >
+  <div class="card-body">
+      <h5 class="card-title" id="date">{{item.0}}</h5>
+      {% for what in item|slice:"1:"%}
+        {% if what.typs == "bg-primary" %}
+            <p class="card-text" onclick="showNote('{{what.title}}' )"  data-bs-toggle="modal" data-bs-target="#noteModal"><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
+        {% else %}
+            <p class="card-text"><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
+        {% endif %}
+      {% endfor %}
+</div>
+</div>
 
 
-    <nav>
-        <a href="#A">A</a>
-        <a href="#B">B</a>
-        <a href="#C">C</a>
-    </nav>
 
-    <!-- 這裡可以添加網頁內容 -->
+<!-- Modal -->
+<div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <div class="input-group border-0 ">
+                    <span class="input-group-text  border-0 " id="basic-addon1">題</span>
+                    <input type="text" class="form-control  border-0 " placeholder="....." aria-label="Username" aria-describedby="basic-addon1" id="noteTitle">
+                </div>
+            </div>
+            <div class="modal-body ">
+                <textarea class="form-control border-0" id="notes" rows="3"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="noteIn">IN</button>
+            </div>
+            <p id='dates'></p>
+        </div>
+    </div>
+</div>
 
-</body>
-</html>
+
+
+
+
+
+{% endfor %}
+</div>
+
 

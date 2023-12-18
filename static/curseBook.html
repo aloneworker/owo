@@ -1,0 +1,114 @@
+{% extends 'bootest.html'%}
+{% block title %} 咒書{% endblock %}
+{% block styles %}
+{% endblock %}
+
+
+
+{% block content %} 
+
+<script>
+function opercurse(param){
+
+$("#cur").text(param);
+}
+</script>
+
+
+
+<div class="container">
+    <div class ="row justify-content-center p-2">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    {% for curse in curses %}
+                    <li class="list-group-item"  onclick="opercurse('{{curse}}' )" 
+            data-bs-toggle="modal" data-bs-target="#curseModal">
+                    <span class="badge bg-warning">咒</span>{{curse}}</li>
+                    {% endfor %}
+                    <li class="list-group-item"> </li>
+                    <li class="list-group-item"> </li>
+                    <li class="list-group-item"> </li>
+                    <li class="list-group-item"> </li>
+                    <li class="list-group-item"> </li>
+                    <li class="list-group-item"> </li>
+                    <li class="list-group-item"> </li>
+                    <li class="list-group-item"> </li>
+                    <li class="list-group-item"> </li>
+                    <li class="list-group-item"> </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!---- modal --->
+<div class="modal fade" id="curseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content ">
+      <div class="modal-body text-center ">
+        <!-- 按鈕和標籤 -->
+        <button type="button" id="curseFinish" class="btn btn-success" data-bs-dismiss="modal">除咒</button>
+        <span id="cur"></span>
+        <button type="button" id="curseBack"class="btn btn-secondary" id="curse-dele" data-bs-dismiss="modal">退回</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+{% endblock %}
+
+{% block scripts %}
+$("#curseFinish").click(function(){
+    var curname = $("#cur").text();
+    curname = "✔"+curname; 
+    console.log(curname);
+    const Data = {'talks':curname}
+    $.ajax({
+	type:'POST',
+	url:'/talking/',
+    dataType:'json',
+	data:Data,
+	success:function(response){
+        alert(response.response);
+        location.reload();
+    },
+	error:function(response){}
+	});
+ 
+});
+
+$("#curseBack").click(function(){
+
+    var curname = $("#cur").text();
+    curname = "}"+curname; 
+    const Data = {'talks':curname}
+    $.ajax({
+	type:'POST',
+	url:'/talking/',
+    dataType:'json',
+	data:Data,
+	success:function(response){
+        alert(response.response);
+        location.reload();
+    },
+	error:function(response){}
+	});
+ 
+
+
+});
+function talksTo(param)
+{
+
+console.log(param);
+}
+
+{% endblock %}
+ 
+

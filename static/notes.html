@@ -1,0 +1,320 @@
+
+{% extends 'bootest.html'%}
+
+{% block title %} 本 {% endblock %}
+{% block styles %}
+
+{% endblock %}
+{% block content %}
+<script>
+
+
+function showCurse(param)
+{
+ $("#cur").text(param);    
+}
+
+function showNote(param){
+    var Data = {'title':param};
+    $.ajax({
+	type:'POST',
+	url:'/getNotes/',
+    dataType:'json',
+	data:Data,
+	success:function(response){
+        datas = response.datas
+        $("#noteTitle").val(datas.title);
+        $("#notes").val(datas.txt);
+        $("#dates").text(datas.date).hide();
+    },
+	error:function(response){}
+
+	});
+
+
+}
+
+function showThink(param){
+    var data = param ;
+    $(".departTxt").html('<span class="badge bg-success">空想</span> <span id="think">'+ param+"</span>");
+
+
+}
+
+</script>
+
+
+<div class="content px-4 " id = "lis">
+{% for item in datas.items %}
+<div class="card" id="boad" >
+  <div class="card-body">
+      <h5 class="card-title" id="date">{{item.0}}</h5>
+      {% for what in item|slice:"1:"%}
+        {% if what.typs == "bg-primary" %}
+            <p class="card-text" onclick="showNote('{{what.title}}' )" 
+            data-bs-toggle="modal" data-bs-target="#noteModal"><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
+        
+        {% elif what.tag == "#" or what.tag == "Q" %}
+        <p class="card-text"  onclick="showCurse('{{what.title}}')" data-bs-toggle="modal" data-bs-target="#eveModal"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
+      
+         <!-- <p class="card-text" data-bs-toggle="modal" data-bs-target="#eveModal{{what.title}}"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>-->
+<!-- Modal -->
+        {% elif what.tag == "@"%}
+        <p class="card-text" onclick="showThink('{{what.title}}')"  data-bs-toggle="modal" data-bs-target="#thinkModal"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
+
+        {% else %}
+            <p class="card-text"><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
+        {% endif %}
+      {% endfor %}
+</div>
+</div>
+
+
+
+{% endfor %}
+</div>
+
+
+<!---- modal --->
+<div class="modal fade" id="eveModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content ">
+      <div class="modal-body text-center ">
+        <!-- 按鈕和標籤 -->
+        <button type="button" id="curseTo" class="btn btn-secondary" data-bs-dismiss="modal">咒</button>
+        <span id="cur"></span>
+        <button type="button" id="curseDele"class="btn btn-primary" id="curse-dele" data-bs-dismiss="modal">刪除</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!---- modal --->
+<div class="modal fade" id="thinkDepartModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content ">
+      <div class="modal-body text-center ">
+        <!-- Depart and  -->
+        <button type="button" id="departTo" class="btn btn-secondary" data-bs-dismiss="modal">空想</button>
+        <span id="cur"></span>
+        <button type="button" id="eventTo"class="btn btn-primary" id="curse-dele" data-bs-dismiss="modal">事件
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!----Think  modal --->
+<div class="modal fade" id="thinkModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content ">
+
+            <div class="modal-body text-center ">
+
+                <div class="alert alert-success departTxt" >
+                    <span class="badge bg-success">空想</span> ...................
+                </div>
+
+                <div class="p-3">        
+                    <button type="button" id="thinkDepart" class="btn btn-primary m-3 p-5"  data-bs-toggle="modal" data-bs-target="#deparThinkModal" >分</button>
+                    <button type="button" id="thinkDele"class="btn btn-secondary m-5 p-2" data-bs-dismiss="modal">刪</button>
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!----Depart  modal --->
+<div class="modal fade" id="deparThinkModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content ">
+            <div class="modal-body text-center ">
+
+
+                <div class="alert alert-success departTxt" id = "think">
+                    <span class="badge bg-success">空想</span> ...................
+                </div>
+
+                <div class="input-group mb-3">
+                    
+ <span class="input-group-text bg-success text-white " id="dpThink"data-bs-toggle="modal" data-bs-target="#thinkModal"> 空想 </span>
+                    <input type="text" id = "thinkWhat"  class="form-control"  aria-label="Recipient's username" aria-describedby="basic-addon2">
+                    <span class="input-group-text bg-danger text-white " id="dpEve"data-bs-toggle="modal" data-bs-target="#thinkModal"> 事件 </span></div>
+
+
+            </div>
+
+        </div> 
+    </div>
+</div>
+  </div>
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <div class="input-group border-0 ">
+                    <span class="input-group-text  border-0 " id="basic-addon1">題</span>
+                    <input type="text" class="form-control  border-0 " placeholder="....." aria-label="Username" aria-describedby="basic-addon1" id="noteTitle">
+                </div>
+            </div>
+            <div class="modal-body ">
+                <textarea class="form-control border-0" id="notes" rows="3"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="noteIn">IN</button>
+            </div>
+            <p id='dates'></p>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block scripts %}
+
+
+
+$("#dpThink").click(function (){
+
+    var what = $("#thinkWhat").val();
+    $("#thinkWhat").val('');
+    var think = $("#think").text();
+    what = '['+think+'] '+what;
+    $("#eventWhat").val('');
+    what = '@' + what;
+    var Data = {'talks':what};
+    $.ajax({
+	type:'POST',
+	url:'/talking/',
+    dataType:'json',
+	data:Data,
+	success:function(response){
+
+
+    },
+	error:function(response){}
+
+	});
+
+
+});
+
+$("#dpEve").click(function (){
+    var what = $("#thinkWhat").val();
+    $("#thinkWhat").val('');
+    var think = $("#think").text();
+    what = '['+think+'] '+what;
+    what = 'Q' + what;
+    var Data = {'talks':what};
+    $.ajax({
+        type:'POST',
+        url:'/talking/',
+        dataType:'json',
+        data:Data,
+	success:function(response){
+
+
+
+    },
+	error:function(response){}
+
+	});
+
+
+
+
+});
+
+
+
+
+$("#noteIn").click(function (){
+  var date = $("#dates").text();
+  var title = $("#noteTitle").val();
+  var txt = $("#notes").val();
+  const Data = {'tit':title,'txt':txt,'date':date};
+
+
+    $.ajax({
+	type:'POST',
+	url:'/saveNotes/',
+    dataType:'json',
+	data:Data,
+	success:function(response){},
+	error:function(response){}
+	});
+
+});
+
+$("#thinkDele").click(function(){
+    var think = $("#think").text();
+    think = "☞"+think;
+    const Data = {'talks':think}
+    $.ajax({
+	type:'POST',
+	url:'/talking/',
+    dataType:'json',
+	data:Data,
+	success:function(response){
+        alert(response.response);
+        location.reload();
+    },
+	error:function(response){}
+	});
+ 
+});
+
+$("#curseDele").click(function(){
+    var curses = $("#cur").text();
+    console.log(curses);
+    curses = "☞"+curses ;
+    const Data = {'talks':curses}
+    $.ajax({
+	type:'POST',
+	url:'/talking/',
+    dataType:'json',
+	data:Data,
+	success:function(response){
+        alert(response.response);
+        location.reload();
+    },
+	error:function(response){}
+	});
+ 
+});
+
+$("#curseTo").click(function(){
+    var curses = $("#cur").text();
+    curses = "^"+curses ;
+    const Data = {'talks':curses}
+    $.ajax({
+	type:'POST',
+	url:'/talking/',
+    dataType:'json',
+	data:Data,
+	success:function(response){
+        alert(response.response);
+        location.reload();
+    },
+	error:function(response){}
+	});
+  
+});
+
+
+{% endblock %}
+ 
+{% block talkreact %}
+location.reload();
+{% endblock %}
+ 

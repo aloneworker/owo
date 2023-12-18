@@ -5,7 +5,7 @@ import random
 from .whats import *
 from itertools import groupby
 from operator import attrgetter 
-import datetime 
+from datetime import datetime 
 from .PERSONS import Person
 from django.contrib import auth
  
@@ -31,6 +31,13 @@ def login(request):
     else:
         return render(request, 'login.html', locals())
 
+def notes(request):
+    datas = getAllnotes()
+    return render(request, 'notes.html',{'datas':datas})
+def curseBook(request):
+    return render(request, 'curseBook.html')
+def main(request):
+    return render(request,'main.html')
 def getTodos(request):
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -42,22 +49,24 @@ def getTodos(request):
 def getNotes(request):
     if request.method == 'POST':
         title = request.POST.get('title')
-        data = bulletNotemodel.objects.filter(content = title)
-        note = {'title':data[0].content,'txt':data[0].txt}
+        data = bulletNotemodel.objects.filter(Q(content=title)&Q(title='Note'))
+        note = {'title':data[0].content,'txt':data[0].txt,'date':data[0].date}
         return JsonResponse({'response': title,'datas':note })
     return JsonResponse({'response': '...','datas':'...'})
 
 
 def saveNotes(request):
-    if request.method == 'POST':
- 
+    if request.method == 'POST': 
         # 获取POST请求中的参数
         tit = request.POST.get('tit')
         txt = request.POST.get('txt')
+        date = request.POST.get('date')
         datas = getSameDate()
         # 在这里处理参数
         if tit :
-            note = bulletNotemodel.objects.get(content = tit)
+            date = datetime.strptime(date,"%Y-%m-%d").date()
+            note = bulletNotemodel.objects.get(Q(content =
+                                                 tit)&Q(title='Note')&Q(date=date))
             note.txt = txt 
             note.save()
             return JsonResponse({'message': '参数已收到','datas':datas})
@@ -127,7 +136,7 @@ SAYS = {'?':['不懂？','什麼？','？？？']}
 
 
 def t(request):
-    return render(request, 'test.html',{'OPEs':['HI','發呆']})
+    return render(request, 'main.html',{'OPEs':['HI','發呆']})
 
 
 def ajaxt(request):

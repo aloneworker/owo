@@ -17,22 +17,80 @@ WHATS = {'HI':HI ,'TD':TODOs,'dowhat':SHOWTODO
          'note':NOTEING,'test':seeWhat,'zzz':seeWhat}
 SAYS = {'?':['不懂？','什麼？','？？？']}
 
- 
-
 
 person = Person() 
- 
 
 
 class oWo_:
     def __init__(self):
         self.topic = None
-
+        self.notes = None
+        self.notes = getAllnotes()
+        self.curses = []
+        self.curseLv = 0
+        self.getcurse()
+        self.getcursePower()
     def start(self,request):
         if request.user.is_authenticated:
-            return render(request, 'Gotalking.html',{'OPEs':['HI','發呆']})
+            return render(request, 'main.html')
         return HttpResponseRedirect('/')
+    def getcurse(self):
+        curses = bulletNotemodel.objects.filter(title = '咒')
+        for curse in curses :
+            self.curses.append(curse.content)
+    def cursePowerchange(self,param):
+        point = int(param)
+        self.cursePower += point
+        self.saveCurse()
 
+
+    def reflashBook(self):
+        self.notes = getAllnotes()
+
+
+    def saveCurse(self):
+
+        condition_A = {'title': '[誌]'}  # 替換為您的條件A
+        condition_B = {'content': '咒力'}  # 替換為您的條件B
+
+        # 使用filter()方法來查找具有條件A和條件B的資料記錄
+        matching_records = bulletNotemodel.objects.filter(**condition_A,**condition_B).first()
+
+        matching_records.txt = self.cursePower
+        matching_records.order = self.curseLv
+        matching_records.save()
+
+    def getcursePower(self):
+        condition_A = {'title': '[誌]'}  # 替換為您的條件A
+        condition_B = {'content': '咒力'}  # 替換為您的條件B
+
+        # 使用filter()方法來查找具有條件A和條件B的資料記錄
+        matching_records = bulletNotemodel.objects.filter(**condition_A , **condition_B)
+
+        if matching_records.exists():
+        # 找到符合條件的資料記錄，取第一個（或根據需求進一步選擇）
+            existing_record = matching_records.first()
+            self.cursePower = int(existing_record.txt)
+            self.curseLv = int(existing_record.order)
+
+        else:
+        # 找不到符合條件的資料記錄，創建一個新的資料記錄
+            new_record = bulletNotemodel(**condition_A, **condition_B)
+            new_record.txt = 0
+            today = datetime.datetime.now()
+            today = today.strftime('%Y-%m-%d')
+            new_record.date = today
+            new_record.save()
+            self.curseLv =0
+            self.cursePower = 0
+    def noteWeb(self,request):
+        if request.user.is_authenticated:
+            return render (request,'notes.html',{'datas':self.notes})
+        return HttpResponseRedirect('/')
+    def curseBook(self,request):
+        if request.user.is_authenticated:
+            return render(request,'curseBook.html',{'curses':self.curses})
+        return HttpResponseRedirect('/')
     def noteSAVE(self,request):
         if request.method == 'POST':
             data = request.POST.get('data')
@@ -58,13 +116,73 @@ class oWo_:
                     if user_input[0] == 'Q' or user_input[0] == 'q':
                         topic = ADDTODO()
                         chat_what = topic.OP(user_input[1:])
-                        return JsonResponse({'response': chat_what,'datas':datas})
+                        self.reflashBook()
+                        return JsonResponse({'response':
+                                             chat_what,'datas':self.notes})
                     if user_input[0] == '@' :
                         obj = user_input[1:]
                         if obj == '' :
                             return
                         topic = ADDTHI()
                         chat_what = topic.OP(obj)
+                        self.reflashBook()
+                        return  JsonResponse({'response': chat_what,'datas':datas})
+                    elif user_input[0] == '^':
+                        obj = user_input[1:]
+                        if len(self.curses)>=3+self.curseLv :
+                            return JsonResponse({'response':'咒書已滿!'})
+                        else :
+                            self.curses.append(obj)
+                            item = bulletNotemodel.objects.get(Q(content=obj)&(Q(title="Q")|Q(title="#")))
+                            item.title = "咒"
+                            item.save()
+                            self.notes = getAllnotes()
+                            return JsonResponse({'response':'加入!'})
+                    elif user_input[0] == '☞':
+                        obj = user_input[1:]
+                        item = bulletNotemodel.objects.get(content =obj)
+                        item.delete()
+                        self.notes = getAllnotes()
+                        return JsonResponse({'response':'刪除了!'})
+                    elif user_input[0] == '}':
+                        obj = user_input[1:]
+                        curse =bulletNotemodel.objects.get(content=obj)
+                        curse.title = 'Q'
+                        curse.save()
+                        self.curses.remove(obj)
+                        point = random.randint(10,30)
+                        self.cursePower -= point
+                        self.cursePowerchange(0)
+                        self.notes = getAllnotes()
+                        return JsonResponse({'response':'咒退回!使用 '+str(point)+'咒力'})
+
+                    elif user_input[0] == '✔':
+                        obj = user_input[1:]
+                        curse =bulletNotemodel.objects.get(Q(content=obj)&Q(title='咒'))
+                        curse.title ='完成'
+                        curse.save()
+                        self.curses.remove(obj)
+                        point = random.randint(4,12)
+                        self.cursePowerchange(point)
+                        self.notes = getAllnotes()
+                        return JsonResponse({'response':'消除成功!獲 '+str(point)+'咒力'})
+                    if user_input[0] == '?' :
+                        topic = whatNotes()
+                        obj = user_input[1:]
+                        if obj == '' :
+                            chat_what = "NO???"
+                        else :
+                            self.notes = topic.OP(obj)
+                            chat_what = "我馬上查詢" ;
+                        return  JsonResponse({'response':
+                                              chat_what,'datas':self.notes})
+                    if user_input[0] == '#' :
+                        obj = user_input[1:]
+                        if obj == '' :
+                            return  JsonResponse({'response': chat_what,'datas':datas})
+
+                        topic = ADDEVENT()
+                        topic.OP(obj)
                         return  JsonResponse({'response': chat_what,'datas':datas})
 
 

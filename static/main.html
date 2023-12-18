@@ -1,0 +1,182 @@
+{% extends 'bootest.html'%}
+{% block title %} MAIN {% endblock %}
+{% block styles %}
+{% endblock %}
+
+
+
+{% block content %} 
+<div class="container">
+    
+    <div class="text-center p-5">
+        勵志的話
+    </div>
+
+    <div class="p-2">
+        <div class="form-floating">
+            <div class="input-group">
+                <span class="input-group-text bg-info bg-gradient text-light" id="clear">clear</span>
+                <div class="form-floating bg-warning bg-gradient">
+                    <textarea class="form-control bg-warning  " placeholder="Leave a comment here" id="floatingTextarea" ></textarea>
+                    <label class="h1 text-muted" for="floatingTextarea">Memo</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class='container'>
+
+<div class="p-2 gap-2 d-block">
+  <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#eventModal">事件</button>
+  <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#thinkModal">空想</button>
+  <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#noteModal">記事</button>
+
+
+</div>
+
+    </div>
+    
+
+    <div>
+        RSS 新聞card
+    </div>
+
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-footer">
+                <div class="input-group ">
+                    <input type="text" class="form-control border-0" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2" id="eventWhat">
+                    <button class="btn btn-outline-secondary border-0" type="button"  data-bs-dismiss="modal" id="eveIn">加入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="thinkModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-footer">
+                <div class="input-group ">
+                    <input type="text" class="form-control border-0" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2" id="thinkWhat">
+                    <button class="btn btn-outline-secondary border-0" type="button" id="thinkIn">加入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+      <div class="modal-header border-0">
+     <div class="input-group border-0 ">
+  <span class="input-group-text  border-0 " id="basic-addon1">題</span>
+  <input type="text" class="form-control  border-0 " placeholder="....." aria-label="Username" aria-describedby="basic-addon1" id="noteTitle">
+</div>
+      </div>
+            <div class="modal-body ">
+                <textarea class="form-control border-0" id="notes" rows="3"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="noteIn">IN</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
+{% block scripts %}
+
+$("#clear").click(function(){
+    $("#floatingTextarea").val('');
+
+});
+
+$("#eveIn").click(function(){
+    var what = $("#eventWhat").val();
+    $("#eventWhat").val('');
+    what = '#' + what;
+    var Data = {'talks':what};
+    $.ajax({
+	type:'POST',
+	url:'/talking/',
+    dataType:'json',
+	data:Data,
+	success:function(response){
+    },
+	error:function(response){}
+
+	});
+
+ });
+
+$("#thinkIn").click(function(){
+
+    var what = $("#thinkWhat").val();
+    $("#thinkWhat").val('');
+    what = '@' + what;
+    var Data = {'talks':what};
+    $.ajax({
+        type:'POST',
+        url:'/talking/',
+        dataType:'json',
+        data:Data,
+
+
+    });
+});
+
+
+$("#noteIn").click(function(){
+    var title = $("#noteTitle").val();
+    if (title == ''){
+        alert('題 不能空白！');
+    }else
+    {
+        $("#noteTitle").val('');
+        var notes = $("#notes").val();
+        $("#notes").val('');
+        var what = title + '|' + notes ;
+        var Data = {'data':what};
+    $.ajax({
+        type:'POST',
+        url:'/noteSAVE/',
+        dataType:'json',
+        data:Data,
+        
+
+    });
+
+    }
+
+
+
+});
+
+
+{% endblock %}
+ 
+
