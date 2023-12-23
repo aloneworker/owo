@@ -75,6 +75,7 @@ $("#curseFinish").click(function(){
     dataType:'json',
 	data:Data,
 	success:function(response){
+    navigator.vibrate(1000); // 1 秒振動
         alert(response.response);
         location.reload();
     },
