@@ -183,6 +183,7 @@ class oWo_:
 
                         topic = ADDEVENT()
                         topic.OP(obj)
+                        self.reflashBook()
                         return  JsonResponse({'response': chat_what,'datas':datas})
 
 
