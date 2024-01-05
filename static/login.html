@@ -1,41 +1,66 @@
-<!DOCTYPE html>
-{% load static %}
+  <!DOCTYPE html>
 <html>
-<title>登登登登</title>
+<head>
+    <title>登入頁面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
+        .login-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+            text-align: center;
+        }
 
-<style>
-    body {
-        background-image: url("{% static 'images/GGG.jpg' %}");
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-</style>
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
 
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            background-color: #4CAF50;
+            cursor: pointer;
+        }
 
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .login-container h2 {
+            color: #333;
+        }
+    </style>
 </head>
 <body>
-  <h1>登入</h1><br>
 
-<div><form method="post" class="center">
-      {% csrf_token %}
-      <div><table class="center">
-        <tr>
-          <td width="16%" align="right">帳號:</td>
-          <td width="84%"><input type="text" name="username" id="username"></td>
-        </tr>
-        <tr>
-          <td width="16%" align="right">密碼:</td>
-          <td width="84%"><input type="password" name="password" id = "password" ></td>
-        </tr>
-        <tr>
-          <div><td><p><input type="submit" name="login" value="登入"></p></td></div>
-          <div><td>
- 
- 
-        </tr>
-      </table></div>   
-  </form></div>
+<div class="login-container">
+    <h2>登入</h2>
+    <form method="post">
+{% csrf_token %}
+        <input  id = "username" type="text" placeholder="使用者名稱" name="username" required>
+        <input id = "password" type="password" placeholder="密碼" name="password" required>
+        <input type="submit" name="login"value="登入">
+    </form>
+</div>
 
+</body>
 </html>
+
+
