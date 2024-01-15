@@ -1,48 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>25分鐘計時器</title>
+    <style>
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
 
-<div class="content px-4 " id = "lis">
-{% for item in datas.items %}
-<div class="card" id="boad" >
-  <div class="card-body">
-      <h5 class="card-title" id="date">{{item.0}}</h5>
-      {% for what in item|slice:"1:"%}
-        {% if what.typs == "bg-primary" %}
-            <p class="card-text" onclick="showNote('{{what.title}}' )"  data-bs-toggle="modal" data-bs-target="#noteModal"><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
-        {% else %}
-            <p class="card-text"><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
-        {% endif %}
-      {% endfor %}
-</div>
-</div>
+.timer-container {
+    text-align: center;
+}
+
+.timer {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: conic-gradient(
+        red 0% 0%, 
+        green 100% 100%
+    );
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+span {
+    font-size: 2em;
+}
+
+button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 1em;
+}
 
 
-
-<!-- Modal -->
-<div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header border-0">
-                <div class="input-group border-0 ">
-                    <span class="input-group-text  border-0 " id="basic-addon1">題</span>
-                    <input type="text" class="form-control  border-0 " placeholder="....." aria-label="Username" aria-describedby="basic-addon1" id="noteTitle">
-                </div>
-            </div>
-            <div class="modal-body ">
-                <textarea class="form-control border-0" id="notes" rows="3"></textarea>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="noteIn">IN</button>
-            </div>
-            <p id='dates'></p>
+    </style>
+</head>
+<body>
+    <div class="timer-container">
+        <div class="timer" id="timer">
+            <span id="time">25:00</span>
         </div>
+        <button id="complete">完成</button>
+        <button id="fail">失敗</button>
     </div>
-</div>
+    <script>
+const timerElement = document.getElementById('timer');
+const timeElement = document.getElementById('time');
+const completeButton = document.getElementById('complete');
+const failButton = document.getElementById('fail');
+
+let totalTime = 25 * 60; // 25 分鐘
+let timeLeft = totalTime;
+
+const updateTimer = () => {
+    let minutes = Math.floor(timeLeft / 60);
+    let seconds = timeLeft % 60;
+    timeElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    timerElement.style.background = `conic-gradient(
+        green ${((totalTime - timeLeft) / totalTime) * 100}% 0%,
+        red 0% 100%
+    )`;
+};
+
+const timer = setInterval(() => {
+    if (timeLeft <= 0) {
+        clearInterval(timer);
+        alert("時間到！");
+        return;
+    }
+    timeLeft--;
+    updateTimer();
+}, 1000);
+
+updateTimer();
+
+completeButton.addEventListener('click', () => {
+    clearInterval(timer);
+    alert("計時器完成！");
+});
+
+failButton.addEventListener('click', () => {
+    clearInterval(timer);
+    alert("計時器失敗！");
+});
 
 
 
-
-
-
-{% endfor %}
-</div>
-
+    </script>
+</body>
+</html>
 

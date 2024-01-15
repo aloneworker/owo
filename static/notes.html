@@ -34,6 +34,11 @@ function showNote(param){
 
 }
 
+function showUpgrad(param){
+    $("#upgradLog").text(param);
+
+}
+
 function showThink(param){
     var data = param ;
     $(".departTxt").html('<span class="badge bg-success">空想</span> <span id="think">'+ param+"</span>");
@@ -61,7 +66,9 @@ function showThink(param){
 <!-- Modal -->
         {% elif what.tag == "@"%}
         <p class="card-text" onclick="showThink('{{what.title}}')"  data-bs-toggle="modal" data-bs-target="#thinkModal"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
-
+        {% elif what.tag == "[誌]" %}
+         <p class="card-text" onclick="showUpgrad('{{what.title}}')"  data-bs-toggle="modal" data-bs-target="#upgradModal"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
+        
         {% else %}
             <p class="card-text"><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
         {% endif %}
@@ -81,13 +88,31 @@ function showThink(param){
       <div class="modal-content ">
       <div class="modal-body text-center ">
         <!-- 按鈕和標籤 -->
-        <button type="button" id="curseTo" class="btn btn-secondary" data-bs-dismiss="modal">咒</button>
+        <button type="button" id="curseTo" class="btn btn-warning" data-bs-dismiss="modal">咒</button>
         <span id="cur"></span>
-        <button type="button" id="curseDele"class="btn btn-primary" id="curse-dele" data-bs-dismiss="modal">刪除</button>
+        <button type="button" id="curseDele"class="btn btn-secondary" id="curse-dele" data-bs-dismiss="modal">刪除</button>
       </div>
     </div>
   </div>
 </div>
+
+
+
+<!---- upgradmodal --->
+<div class="modal fade" id="upgradModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content ">
+      <div class="modal-body text-center ">
+        <!-- 按鈕和標籤 -->
+        <button type="button" id="logTo" class="btn btn-success" data-bs-dismiss="modal">空想</button>
+        <span id="upgradLog"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
 <!---- modal --->
 <div class="modal fade" id="thinkDepartModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -181,6 +206,7 @@ function showThink(param){
 {% endblock %}
 
 {% block scripts %}
+
 
 
 
@@ -304,6 +330,23 @@ $("#curseTo").click(function(){
 	data:Data,
 	success:function(response){
         alert(response.response);
+        location.reload();
+    },
+	error:function(response){}
+	});
+  
+});
+
+$("#logTo").click(function(){
+    var log = $("#upgradLog").text();
+    log = "☄"+log ;
+    const Data = {'talks':log}
+    $.ajax({
+	type:'POST',
+	url:'/talking/',
+    dataType:'json',
+	data:Data,
+	success:function(response){
         location.reload();
     },
 	error:function(response){}

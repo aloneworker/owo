@@ -140,10 +140,19 @@ class oWo_:
                             return JsonResponse({'response':'加入!'})
                     elif user_input[0] == '☞':
                         obj = user_input[1:]
-                        item = bulletNotemodel.objects.get(content =obj)
+                        item = bulletNotemodel.objects.filter(content =obj).first()
                         item.delete()
                         self.notes = getAllnotes()
                         return JsonResponse({'response':'刪除了!'})
+
+                    elif user_input[0] == '☄':
+                        obj = user_input[1:]
+                        log =bulletNotemodel.objects.filter(content=obj).first()
+                        log.title = '@'
+                        log.save()
+                        self.notes = getAllnotes()
+
+           
                     elif user_input[0] == '}':
                         obj = user_input[1:]
                         curse =bulletNotemodel.objects.get(content=obj)
@@ -194,7 +203,6 @@ class oWo_:
                     elif user_input[0] == '.' :
                         topic = ADDLOG()
                         chat_what = topic.OP(user_input[1:])
-
                     elif user_input in WHATS :
                         WH = WHATS[user_input]
                         self.topic = WH()
@@ -206,6 +214,7 @@ class oWo_:
      
                         return JsonResponse({'response': chat_what,'datas':datas})
             # 假設chat_what是由AI模型回傳的回覆
+            self.reflashBook()
             return JsonResponse({'response': chat_what,'datas':datas})
     
 

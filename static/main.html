@@ -1,24 +1,33 @@
 {% extends 'bootest.html'%}
+{% load static %}
+
 {% block title %} MAIN {% endblock %}
-{% block styles %}
+{% block styles %}{% endblock %}
+{% block headparam %}
+<script src="{% static 'JS/generate.js' %}"></script>
+
+
 {% endblock %}
 
 
-
 {% block content %} 
+
 <div class="container">
+<div>
+    <h3 class="text-center" id="dateOutput"></h1>
+    <h1 class = "text-center" id="solarTermOutput"></h1>
+</div>
     
-    <div class="text-center p-5">
-        勵志的話
+    <div id="inspirationDiv" class="text-center p-5">
     </div>
 
     <div class="p-2">
         <div class="form-floating">
             <div class="input-group">
-                <span class="input-group-text bg-info bg-gradient text-light" id="clear">clear</span>
+                <span class="input-group-text bg-info bg-gradient text-light" id="LogIN">誌</span>
                 <div class="form-floating bg-warning bg-gradient">
-                    <textarea class="form-control bg-warning  " placeholder="Leave a comment here" id="floatingTextarea" ></textarea>
-                    <label class="h1 text-muted" for="floatingTextarea">Memo</label>
+                    <textarea id = "Logwhat" class="form-control bg-warning  " placeholder="Leave a comment here" id="floatingTextarea" ></textarea>
+                    <label class="h2 text-muted" for="floatingTextarea">LOGing...</label>
                 </div>
             </div>
         </div>
@@ -28,8 +37,10 @@
     <div class='container'>
 
 <div class="p-2 gap-2 d-block">
-  <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#eventModal">事件</button>
+  <!---
+   <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#eventModal">事件</button>
   <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#thinkModal">空想</button>
+  ---!>
   <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#noteModal">記事</button>
 
 
@@ -90,20 +101,28 @@
     </div>
 </div>
 
-<rssapp-list id="k5hiqe98CljEaQps"></rssapp-list><script src="https://widget.rss.app/v1/list.js" type="text/javascript" async></script>
-<rssapp-list id="LPGcvX6NnawjKGiM"></rssapp-list><script src="https://widget.rss.app/v1/list.js" type="text/javascript" async></script>
-<rssapp-list id="JW3AMNIZuJ6CABDP"></rssapp-list><script src="https://widget.rss.app/v1/list.js" type="text/javascript" async></script>
-<rssapp-list id="PhunPpZYxm5LjvGT"></rssapp-list><script src="https://widget.rss.app/v1/list.js" type="text/javascript" async></script>
-<rssapp-list id="APwuq4UgPNNth5Ey"></rssapp-list><script src="https://widget.rss.app/v1/list.js" type="text/javascript" async></script>
-
-
 
 {% endblock %}
 
 {% block scripts %}
 
-$("#clear").click(function(){
-    $("#floatingTextarea").val('');
+$("#LogIN").click(function(){
+  
+    var what = $("#Logwhat").val();
+    what = '.' + what ;
+    $("#Logwhat").val('');
+    var Data = {'talks':what};
+    $.ajax({
+	type:'POST',
+	url:'/talking/',
+    dataType:'json',
+	data:Data,
+	success:function(response){
+    },
+	error:function(response){}
+
+	});
+
 
 });
 
@@ -167,6 +186,59 @@ $("#noteIn").click(function(){
 
 
 });
+
+displayInspiration();
+
+function getCurrentDate() {
+    const today = new Date();
+    return today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+}
+
+function getSolarTerm(date) {
+    const terms = [
+        "小寒", "大寒", "立春", "雨水", "驚蟄", "春分",
+        "清明", "穀雨", "立夏", "小滿", "芒種", "夏至",
+        "小暑", "大暑", "立秋", "處暑", "白露", "秋分",
+        "寒露", "霜降", "立冬", "小雪", "大雪", "冬至"
+    ];
+    const termDates = [
+        // Dates are approximate and might need adjustments
+        new Date(date.getFullYear(), 0, 5), new Date(date.getFullYear(), 0, 20),
+        // ... [dates for other solar terms] ...
+        new Date(date.getFullYear(), 11, 22), new Date(date.getFullYear(), 11, 31)
+    ];
+    
+
+
+
+    for (let i = 0; i < termDates.length; i++) {
+        if (date < termDates[i]) {
+            return terms[i];
+        }
+    }
+    return terms[0];
+}
+
+
+
+
+
+
+
+
+
+
+function updateDateAndSolarTerm() {
+    const currentDate = new Date();
+    const dateStr = getCurrentDate();
+    const solarTerm = getSolarTerm(currentDate);
+
+    document.getElementById('dateOutput').textContent = '' + dateStr;
+    document.getElementById('solarTermOutput').textContent = '' + solarTerm;
+}
+
+updateDateAndSolarTerm();
+
 
 
 {% endblock %}

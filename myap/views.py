@@ -136,7 +136,7 @@ SAYS = {'?':['不懂？','什麼？','？？？']}
 
 
 def t(request):
-    return render(request, 'main.html',{'OPEs':['HI','發呆']})
+    return render(request, 'login.html',{'OPEs':['HI','發呆']})
 
 
 def ajaxt(request):
