@@ -101,6 +101,40 @@ class oWo_:
     def talking(self,request):
         if request.method == 'POST':
             user_input = request.POST.get('talks')
+            if user_input == 'newNote':
+                title = request.POST.get('title')
+                notes = request.POST.get('note')
+                today = datetime.datetime.now()
+                today = today.strftime('%Y-%m-%d')
+                note = bulletNotemodel(title='Note',date=today,content=title,txt=notes)
+                note.save()
+                self.reflashBook()
+                return JsonResponse({'response':'加入!'})
+            elif user_input == "edNote":
+                title = request.POST.get('tit')
+                id_ = request.POST.get('id')
+                if title == '':
+                    note = bulletNotemodel.objects.get(id = id_)
+                    note.delete()
+                else :
+                    note = bulletNotemodel.objects.get(id=id_)
+                    note.content = title
+                    txt = request.POST.get('txt')
+                    note.txt = txt
+                    note.save()
+                self.reflashBook()
+                return JsonResponse({'response':'加入!'})
+            elif user_input == "NOTE":
+                use = whatNotes()
+                self.notes = use.OP('Note')
+            elif user_input == "ALL":
+                use = whatNotes()
+                self.reflashBook()
+            elif user_input == "LOG":
+                use = whatNotes()
+                self.notes = use.OP("[誌]")
+                
+            id_ = request.POST.get('id')
             chat_what = []
         # 在這裡處理用戶輸入，例如將其傳遞給AI模型進行處理並獲取回覆
             datas = getSameDate()
@@ -114,6 +148,10 @@ class oWo_:
             if self.topic is None:
                 if user_input != '' :
                     if user_input[0] == 'Q' or user_input[0] == 'q':
+                        if user_input[1:] == '':
+                            topic = whatNotes()
+                            self.notes = topic.OP('Q')
+                            return JsonResponse({'response': chat_what,'datas':datas}) 
                         topic = ADDTODO()
                         chat_what = topic.OP(user_input[1:])
                         self.reflashBook()
@@ -122,9 +160,13 @@ class oWo_:
                     if user_input[0] == '@' :
                         obj = user_input[1:]
                         if obj == '' :
-                            return
-                        topic = ADDTHI()
-                        chat_what = topic.OP(obj)
+                            topic = whatNotes()
+                            self.notes = topic.OP('@')
+                            return JsonResponse({'response': chat_what,'datas':datas}) 
+                        today = datetime.datetime.now()
+                        today = today.strftime('%Y-%m-%d')
+                        tod = bulletNotemodel(title='@',date=today,content=obj)
+                        tod.save()
                         self.reflashBook()
                         return  JsonResponse({'response': chat_what,'datas':datas})
                     elif user_input[0] == '^':
@@ -133,26 +175,25 @@ class oWo_:
                             return JsonResponse({'response':'咒書已滿!'})
                         else :
                             self.curses.append(obj)
-                            item = bulletNotemodel.objects.get(Q(content=obj)&(Q(title="Q")|Q(title="#")))
+                            item = bulletNotemodel.objects.get(id=id_)
                             item.title = "咒"
                             item.save()
                             self.notes = getAllnotes()
                             return JsonResponse({'response':'加入!'})
                     elif user_input[0] == '☞':
                         obj = user_input[1:]
-                        item = bulletNotemodel.objects.filter(content =obj).first()
+                        item = bulletNotemodel.objects.get(id=id_)
                         item.delete()
                         self.notes = getAllnotes()
                         return JsonResponse({'response':'刪除了!'})
 
                     elif user_input[0] == '☄':
                         obj = user_input[1:]
-                        log =bulletNotemodel.objects.filter(content=obj).first()
+                        log =bulletNotemodel.objects.get(id=id_)
                         log.title = '@'
                         log.save()
                         self.notes = getAllnotes()
 
-           
                     elif user_input[0] == '}':
                         obj = user_input[1:]
                         curse =bulletNotemodel.objects.get(content=obj)

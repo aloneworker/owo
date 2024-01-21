@@ -19,8 +19,13 @@ def getAllnotes():  #把資料輸出 [日期,A抬頭.A,B抬頭.B]
             for g in group:
                 data_d = {}
                 data_d['tag']=g.title
-                data_d['typs'] = typs[g.title]
+                if g.title in typs :
+                    typ = typs[g.title]
+                else :
+                    typ = 'bg-white'
+                data_d['typs'] = typ
                 data_d['title']=g.content
+                data_d['id']=g.id
                 datal.append(data_d)
             key = key.strftime("%Y-%m-%d")
             datal.append(key)
@@ -150,6 +155,7 @@ class whatNotes(BASE):
                 data_d['tag']=g.title
                 data_d['typs'] = typs[g.title]
                 data_d['title']=g.content
+                data_d['id'] = g.id
                 datal.append(data_d)
             key = key.strftime("%Y-%m-%d")
             datal.append(key)

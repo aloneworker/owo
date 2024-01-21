@@ -48,10 +48,10 @@ def getTodos(request):
  
 def getNotes(request):
     if request.method == 'POST':
-        title = request.POST.get('title')
-        data = bulletNotemodel.objects.filter(Q(content=title)&Q(title='Note'))
-        note = {'title':data[0].content,'txt':data[0].txt,'date':data[0].date}
-        return JsonResponse({'response': title,'datas':note })
+        id = request.POST.get('id')
+        data = bulletNotemodel.objects.get(id= id)
+        note = {'title':data.content,'txt':data.txt,'date':data.date,'id':data.id}
+        return JsonResponse({'response': data.title,'datas':note })
     return JsonResponse({'response': '...','datas':'...'})
 
 
@@ -61,20 +61,21 @@ def saveNotes(request):
         tit = request.POST.get('tit')
         txt = request.POST.get('txt')
         date = request.POST.get('date')
+        id = request.POST.get('id')
         datas = getSameDate()
         # 在这里处理参数
         if tit :
-            date = datetime.strptime(date,"%Y-%m-%d").date()
-            note = bulletNotemodel.objects.get(Q(content =
-                                                 tit)&Q(title='Note')&Q(date=date))
+            note = bulletNotemodel.objects.get(id = id)
+            note.content = tit
             note.txt = txt 
             note.save()
             return JsonResponse({'message': '参数已收到','datas':datas})
         else:
+            note = bulletNotemodel.objects.get(id = id)
+            note.delete()
             return JsonResponse({'message': '缺少参数','datas':datas}, status=400)
     else:
         return JsonResponse({'message': '只接受POST请求','datas':datas}, status=405)
-        
 def saveTodos(request):
     if request.method == 'POST':
         datas = getSameDate()

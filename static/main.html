@@ -170,11 +170,10 @@ $("#noteIn").click(function(){
         $("#noteTitle").val('');
         var notes = $("#notes").val();
         $("#notes").val('');
-        var what = title + '|' + notes ;
-        var Data = {'data':what};
+        var Data = {'talks':"newNote",'title':title,'note':notes};
     $.ajax({
         type:'POST',
-        url:'/noteSAVE/',
+        url:'/talking/',
         dataType:'json',
         data:Data,
         

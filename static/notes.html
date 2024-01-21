@@ -9,13 +9,14 @@
 <script>
 
 
-function showCurse(param)
+function showCurse(id,title)
 {
- $("#cur").text(param);    
+        $("#cur").text(title);    
+        localStorage.setItem('id_buff',id);
 }
 
-function showNote(param){
-    var Data = {'title':param};
+function showNote(id){
+    var Data = {'id':id};
     $.ajax({
 	type:'POST',
 	url:'/getNotes/',
@@ -26,6 +27,7 @@ function showNote(param){
         $("#noteTitle").val(datas.title);
         $("#notes").val(datas.txt);
         $("#dates").text(datas.date).hide();
+        localStorage.setItem('id_buff',datas.id);
     },
 	error:function(response){}
 
@@ -34,14 +36,15 @@ function showNote(param){
 
 }
 
-function showUpgrad(param){
-    $("#upgradLog").text(param);
+function showUpgrad(id,title){
+    localStorage.setItem('id_buff',id);
+    $("#upgradLog").text(title);
 
 }
 
-function showThink(param){
-    var data = param ;
-    $(".departTxt").html('<span class="badge bg-success">空想</span> <span id="think">'+ param+"</span>");
+function showThink(id,title){
+    localStorage.setItem('id_buff',id);
+    $(".departTxt").html('<span class="badge bg-success">空想</span> <span id="think">'+ title+"</span>");
 
 
 }
@@ -56,18 +59,18 @@ function showThink(param){
       <h5 class="card-title" id="date">{{item.0}}</h5>
       {% for what in item|slice:"1:"%}
         {% if what.typs == "bg-primary" %}
-            <p class="card-text" onclick="showNote('{{what.title}}' )" 
+            <p class="card-text" onclick="showNote('{{what.id}}' )" 
             data-bs-toggle="modal" data-bs-target="#noteModal"><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
         
         {% elif what.tag == "#" or what.tag == "Q" %}
-        <p class="card-text"  onclick="showCurse('{{what.title}}')" data-bs-toggle="modal" data-bs-target="#eveModal"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
+        <p class="card-text"  onclick="showCurse('{{what.id}}','{{what.title}}')" data-bs-toggle="modal" data-bs-target="#eveModal"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
       
          <!-- <p class="card-text" data-bs-toggle="modal" data-bs-target="#eveModal{{what.title}}"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>-->
 <!-- Modal -->
         {% elif what.tag == "@"%}
-        <p class="card-text" onclick="showThink('{{what.title}}')"  data-bs-toggle="modal" data-bs-target="#thinkModal"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
+        <p class="card-text" onclick="showThink('{{what.id}}','{{what.title}}')"  data-bs-toggle="modal" data-bs-target="#thinkModal"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
         {% elif what.tag == "[誌]" %}
-         <p class="card-text" onclick="showUpgrad('{{what.title}}')"  data-bs-toggle="modal" data-bs-target="#upgradModal"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
+        <p class="card-text" onclick="showUpgrad('{{what.id}}','{{what.title}}')"  data-bs-toggle="modal" data-bs-target="#upgradModal"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
         
         {% else %}
             <p class="card-text"><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
@@ -211,21 +214,21 @@ function showThink(param){
 
 
 $("#dpThink").click(function (){
-
+   var id = localStorage.getItem("id_buff");
     var what = $("#thinkWhat").val();
     $("#thinkWhat").val('');
     var think = $("#think").text();
     what = '['+think+'] '+what;
     $("#eventWhat").val('');
-    what = '@' + what;
-    var Data = {'talks':what};
+    what = '@'+ what;
+    var Data = {'talks':what,'id':id};
     $.ajax({
 	type:'POST',
 	url:'/talking/',
     dataType:'json',
 	data:Data,
 	success:function(response){
-
+        location.reload();
 
     },
 	error:function(response){}
@@ -241,7 +244,9 @@ $("#dpEve").click(function (){
     var think = $("#think").text();
     what = '['+think+'] '+what;
     what = 'Q' + what;
-    var Data = {'talks':what};
+   var id = localStorage.getItem("id_buff");
+ 
+    var Data = {'talks':what,'id':id};
     $.ajax({
         type:'POST',
         url:'/talking/',
@@ -265,18 +270,21 @@ $("#dpEve").click(function (){
 
 
 $("#noteIn").click(function (){
+  var noteId = localStorage.getItem("id_buff");
   var date = $("#dates").text();
   var title = $("#noteTitle").val();
   var txt = $("#notes").val();
-  const Data = {'tit':title,'txt':txt,'date':date};
+  const Data = {'talks':'edNote','tit':title,'txt':txt,'date':date,'id':noteId};
 
 
     $.ajax({
 	type:'POST',
-	url:'/saveNotes/',
+	url:'/talking/',
     dataType:'json',
 	data:Data,
-	success:function(response){},
+	success:function(response){
+        location.reload();
+    },
 	error:function(response){}
 	});
 
@@ -285,7 +293,9 @@ $("#noteIn").click(function (){
 $("#thinkDele").click(function(){
     var think = $("#think").text();
     think = "☞"+think;
-    const Data = {'talks':think}
+   var id = localStorage.getItem("id_buff");
+ 
+    const Data = {'talks':think,'id':id}
     $.ajax({
 	type:'POST',
 	url:'/talking/',
@@ -304,7 +314,9 @@ $("#curseDele").click(function(){
     var curses = $("#cur").text();
     console.log(curses);
     curses = "☞"+curses ;
-    const Data = {'talks':curses}
+   var id = localStorage.getItem("id_buff");
+ 
+    const Data = {'talks':curses,'id':id}
     $.ajax({
 	type:'POST',
 	url:'/talking/',
@@ -322,7 +334,9 @@ $("#curseDele").click(function(){
 $("#curseTo").click(function(){
     var curses = $("#cur").text();
     curses = "^"+curses ;
-    const Data = {'talks':curses}
+   var id = localStorage.getItem("id_buff");
+ 
+    const Data = {'talks':curses,'id':id}
     $.ajax({
 	type:'POST',
 	url:'/talking/',
@@ -340,7 +354,9 @@ $("#curseTo").click(function(){
 $("#logTo").click(function(){
     var log = $("#upgradLog").text();
     log = "☄"+log ;
-    const Data = {'talks':log}
+   var id = localStorage.getItem("id_buff");
+ 
+    const Data = {'talks':log,'id':id}
     $.ajax({
 	type:'POST',
 	url:'/talking/',
