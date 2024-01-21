@@ -210,6 +210,9 @@ class oWo_:
                         obj = user_input[1:]
                         curse =bulletNotemodel.objects.get(Q(content=obj)&Q(title='咒'))
                         curse.title ='完成'
+                        today = datetime.datetime.now()
+                        today = today.strftime('%Y-%m-%d')
+                        curse.date = today
                         curse.save()
                         self.curses.remove(obj)
                         point = random.randint(4,12)
