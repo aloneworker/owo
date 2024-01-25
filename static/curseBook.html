@@ -33,9 +33,10 @@ transform: translateX(25%);
 {% block content %} 
 
 <script>
-function opercurse(param){
+function opercurse(id,text){
+    localStorage.setItem('id_buff',id);
 
-$("#cur").text(param);
+    $("#cur").text(text);
 }
 </script>
 
@@ -47,9 +48,9 @@ $("#cur").text(param);
             <div class="card-body">
                 <ul class="list-group list-group-flush">
                     {% for curse in curses %}
-                    <li class="list-group-item"  onclick="opercurse('{{curse}}' )" 
+                    <li class="list-group-item"  onclick="opercurse('{{curse.id}}','{{curse.content}}' )" 
             data-bs-toggle="modal" data-bs-target="#curseModal">
-                    <span class="badge bg-warning">咒</span>{{curse}}</li>
+                    <span class="badge bg-warning">咒</span>{{curse.content}}</li>
                     {% endfor %}
                     <li class="list-group-item"> </li>
                     <li class="list-group-item"> </li>
@@ -93,10 +94,10 @@ $("#cur").text(param);
 
 
 $("#curseFinish").click(function(){
+    var id = localStorage.getItem("id_buff");
     var curname = $("#cur").text();
     curname = "✔"+curname; 
-    console.log(curname);
-    const Data = {'talks':curname}
+    const Data = {'id':id,'talks':curname}
     $.ajax({
 	type:'POST',
 	url:'/talking/',
@@ -113,10 +114,10 @@ $("#curseFinish").click(function(){
 });
 
 $("#curseBack").click(function(){
-
+    var id = localStorage.getItem("id_buff");
     var curname = $("#cur").text();
     curname = "}"+curname; 
-    const Data = {'talks':curname}
+    const Data = {'id':id,'talks':curname}
     $.ajax({
 	type:'POST',
 	url:'/talking/',
