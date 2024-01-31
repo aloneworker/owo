@@ -32,7 +32,8 @@ class oWo_:
         self.getcursePower()
     def start(self,request):
         if request.user.is_authenticated:
-            return render(request, 'main.html')
+            self.getcurse()
+            return render(request, 'main.html',{'curses':self.curses})
         return HttpResponseRedirect('/')
     def getcurse(self):
         self.curses = bulletNotemodel.objects.filter(title = '咒')
@@ -201,7 +202,7 @@ class oWo_:
                         curse =bulletNotemodel.objects.get(id=id_)
                         curse.title = 'Q'
                         curse.save()
-                        self.curses - self.curses.exclude(id = id_)
+                        self.curses = self.curses.exclude(id = id_)
                         point = random.randint(10,30)
                         self.cursePower -= point
                         self.cursePowerchange(0)

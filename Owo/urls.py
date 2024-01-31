@@ -41,6 +41,7 @@ urlpatterns += [
     path('saveTodos/',views.saveTodos,name="saveTodos"),
     path('addTH/',views.addTH,name='addTH'),
     path('notes/',owo.noteWeb,name='notes'),
+    path('Gi/',owo.play),
     path('curseBook/',owo.curseBook,name='curseBook'),
     path('main/',owo.start,name='main'),
     #path('whats/',views.whats),
