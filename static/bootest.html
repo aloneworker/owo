@@ -15,12 +15,13 @@
 	<script src="{% static 'JS/AI_function.js' %}"></script>
     {% block headparam %}{% endblock %}
     <style>
-	{% block styles %}
+	body { padding-top: 56px; }
+    {% block styles %}
 	{% endblock %}
     </style>	
     </head>
   <body>
-  <nav class="navbar navbar-light bg-light">
+  <nav class="navbar navbar-light bg-light fixed-top">
 	  <div class="container-fluid">
 		  <a class="navbar-brand" href="/main/">HOME</a>
           <!--  <a class="navbar-brand" href="/curseBook/">咒</a> --!>
