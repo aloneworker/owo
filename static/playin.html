@@ -7,11 +7,28 @@
 
 {% block content %} 
 
-PLYA
+<div class ="container p-5 ">
+<div class="card" style="width: 18rem;">
+  <img src="..." class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Card title</h5>
+    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
+
+<div class="input-group mb-3 fixed-bottom p-2">
+  <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2">
+  <button class="btn btn-outline-secondary" type="button" id="say">SAY</button>
+</div>
+
+</div>
 {% endblock %}
 
 {% block scripts %}
-
+$("#say").click(function(){
+    alert('ok');
+});
 
 
 {% endblock %}
