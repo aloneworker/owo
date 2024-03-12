@@ -318,7 +318,7 @@ $("#thinkDele").click(function(){
 $("#curseTothink").click(function(){
     var curses = $("#cur").text();
     
-    curses = "@"+curses ;
+    curses = "$"+curses ;
    var id = localStorage.getItem("id_buff");
  
     const Data = {'talks':curses,'id':id}
@@ -338,7 +338,7 @@ $("#curseTothink").click(function(){
 
 $("#curseTolog").click(function(){
     var curses = $("#cur").text();
-    curses = "☄"+curses ;
+    curses = "~"+curses ;
    var id = localStorage.getItem("id_buff");
  
     const Data = {'talks':curses,'id':id}
