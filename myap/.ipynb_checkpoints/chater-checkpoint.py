@@ -30,6 +30,8 @@ class oWo_:
         self.curseLv = 0
         self.getcurse()
         self.getcursePower()
+    def t(self,request):
+        return render(request,'TEST_WORD/TEST.html')
     def start(self,request):
         if request.user.is_authenticated:
             self.getcurse()
@@ -123,6 +125,8 @@ class oWo_:
                     note.content = title
                     txt = request.POST.get('txt')
                     note.txt = txt
+                    today = datetime.datetime.now()
+                    note.date = today
                     note.save()
                 self.reflashBook()
                 return JsonResponse({'response':'加入!'})
