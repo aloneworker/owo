@@ -15,7 +15,15 @@
 	<script src="{% static 'JS/AI_function.js' %}"></script>
     {% block headparam %}{% endblock %}
     <style>
-	body { padding-top: 56px; }
+	body { padding-top: 56px;
+           background-image: url("{% static 'images/A1.jpg' %}");
+              background-size: cover;
+              background-position: center;
+         
+         }
+ div * {
+  opacity: 0.9; /* 將這個div中所有子元件的透明度設為50% */
+}
     {% block styles %}
 	{% endblock %}
     </style>	
