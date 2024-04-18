@@ -72,7 +72,8 @@ function showThink(id,title){
         <p class="card-text" onclick="showThink('{{what.id}}','{{what.title}}')"  data-bs-toggle="modal" data-bs-target="#thinkModal"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
         {% elif what.tag == "[誌]" %}
         <p class="card-text" onclick="showUpgrad('{{what.id}}','{{what.title}}')"  data-bs-toggle="modal" data-bs-target="#upgradModal"  ><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
-        
+        {% elif what.tag == "咒" %}
+          <p class="card-text"><span class="badge {{what.typs}}">一番</span>  {{what.title}} </p>
         {% else %}
             <p class="card-text"><span class="badge {{what.typs}}">{{what.tag}}</span>  {{what.title}} </p>
         {% endif %}
