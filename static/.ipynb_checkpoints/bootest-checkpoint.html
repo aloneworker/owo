@@ -24,6 +24,18 @@
  div * {
   opacity: 0.93; /* 將這個div中所有子元件的透明度設為50% */
 }
+
+
+  .card-img-overlay {
+    position: absolute;
+    bottom: 0;  /* 調整這個值可以改變文字的垂直位置 */
+    right: 0;   /* 調整這個值可以改變文字的水平位置 */
+    color: white; /* 文字顏色 */
+   
+    padding: 10px; /* 內邊距 */
+  }
+ 
+  
     {% block styles %}
 	{% endblock %}
     </style>	
@@ -32,7 +44,7 @@
   <nav class="navbar navbar-light bg-light fixed-top">
 	  <div class="container-fluid">
 		  <a class="navbar-brand" href="/main/">HOME</a>
-          <!--  <a class="navbar-brand" href="/curseBook/">咒</a> --!>
+          
 		  <a class="navbar-brand" href="/notes/">本子</a>
  		  <a class="navbar-brand" href="/Gi/">...</a>
           
@@ -41,6 +53,7 @@
 		  </button>
 		  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
 			  <div class="offcanvas-header">
+                  
 				  <h5 class="offcanvas-title" id="offcanvasNavbarLabel">WHAt?</h5>
 				  <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 			  </div>
@@ -50,11 +63,24 @@
 					  <input class="form-control me-2" id="sayWhat" type="search" placeholder="....." aria-label="Search">
 					  <button class="btn btn-outline-success"  id="gogo" type="button">>></button>
 				  </form>
+
+
+
+
+           <div class="card" style="width: 18rem;">
+  <img id='girs' src="{% static 'images/2.png' %}" class="card-img-top" alt="描述性圖片">
+ 
+</div>
+
+          
 			  </div>
 			  <div class="card">
-				  <div class="card-body" id="talks">
-				    ........
-				  </div>
+  
+          
+        <div class="gir-talk" id="talks">
+            <p>這裡是一些文字或者其他內容。</p>
+        </div>
+    </div>
 				</div>
 			</div>
 		  </div>
@@ -82,6 +108,20 @@
 	data:newData,
 	success:function(response){
         $("#talks").text(response.response);
+                if (response.images && response.images.trim() !== '') {
+                    var staticBaseUrl = "{% static 'images/' %}";
+                    var imageName = response.images;  // 确保response.image包含你要加载的图片名称
+                    
+                    // 使用基础URL和图片名称构建完整的图片URL
+                    var imageUrl = staticBaseUrl + imageName;
+
+                    img = "{% static 'images/${response.images}' %}";
+                    console.log(imageUrl);
+                    $('#girs').attr('src',imageUrl);
+                    $('#girs').show(); // 確保圖片是可見的，如果之前被隱藏了
+                } else {
+                    $('#girs').hide(); // 如果沒有圖片數據，隱藏圖片元素
+                }
         {% block talkreact %}
         {% endblock %}
     },

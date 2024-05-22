@@ -1,5 +1,8 @@
 import openai
-import os  
+import os 
+import time
+from django.conf import settings
+ 
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.db.models import Sum
@@ -29,7 +32,14 @@ class oWo_:
         self.curses = []
         self.curseLv = 0
         self.getcurse()
+        self.cursePower = 0
         self.getcursePower()
+        self.status = 'home'
+        self.cards = [] 
+        self.newcards = 0
+        self.meet_times = 0
+
+    
     def t(self,request):
         return render(request,'TEST_WORD/TEST.html')
     def start(self,request):
@@ -50,7 +60,36 @@ class oWo_:
     def reflashBook(self):
         self.notes = getAllnotes()
 
+    def startDrink(self,request):
+        request.session['start_time'] = time.time()
 
+    def meetlv(self,request):
+        start_time = request.session.get('start_time')
+        if start_time:
+            elapsed_time = time.time() - start_time
+            minutes_passed = int(elapsed_time / 60)
+            if minutes_passed > 30:
+                minutes_passed = 30  # 限制最大30分钟
+
+            # 计算获取S卡的概率
+            chance = 1 + (minutes_passed * 0.1333)  # 基本概率1%，每分钟增加0.1333%
+            chance = min(chance, 5)  # 限制最大概率为5%
+            
+            # 决定是否给予S卡
+            if random.random() * 100 < chance:
+                card = 'S'
+            else:
+                card = 'n'
+            return card
+    def Drinktimeout(self,request):
+        start_time = request.session.get('start_time')
+        if start_time:
+            elapsed_time = time.time() - start_time
+            if elapsed_time >= 1800:  # 30分鐘為1800秒
+                return True
+            else :
+                return False 
+        
     def saveCurse(self):
 
         condition_A = {'title': '[誌]'}  # 替換為您的條件A
@@ -61,7 +100,7 @@ class oWo_:
 
         matching_records.txt = self.cursePower
         matching_records.order = self.curseLv
-        matching_records.save()
+        matching_records.save() 
 
     def getcursePower(self):
         condition_A = {'title': '[誌]'}  # 替換為您的條件A
@@ -102,9 +141,61 @@ class oWo_:
             savenotes(datas[0],datas[1])
         return JsonResponse({'response': 'ok'})
 
+    def spendCursePower(self,point):
+        if self.cursePower >= point :
+            self.cursePower -= point 
+            return True
+        return False 
+    
     def talking(self,request):
         if request.method == 'POST':
             user_input = request.POST.get('talks')
+             
+            if user_input == '酒吧':
+                self.status = 'bar'
+                self.getcursePower()
+                
+                return JsonResponse({'response':'喝酒嗎 ? 10 咒喝一杯 y '.format(self.cursePower),'images':''})
+
+            if user_input == 'y' and self.status == 'bar':
+                if self.spendCursePower(10) :
+                    self.status = 'bar_serchGirl'
+                    self.meet_times = 0 
+                    self.startDrink(request)
+                    return JsonResponse({'response':'喝著酒..看看有沒有妹子! '.format(self.cursePower),'images':''})               
+                return JsonResponse({'response':'你的咒不夠!! '.format(self.cursePower),'images':''})  
+
+            if self.status == 'bar_serchGirl':
+                if self.Drinktimeout(request):
+                    self.status = 'bar'
+                    return JsonResponse({'response':'時間到了!! '.format(self.cursePower),'images':''})  
+                self.meet_times += 1 
+                chance = self.meet_times + 7
+                if random.randint(0,chance) <3:
+                    lv = self.meetlv(request)
+                    return JsonResponse({'response':'你遇到了一個妹子!!{} '.format(lv),'images':''}) 
+                else :
+                    return JsonResponse({'response':'沒 ','images':''}) 
+                
+            
+            if self.status == 'store' and user_input == 'y' :
+                if self.spendCursePower(10) :
+                    self.status = 'draw'
+                    self.newcards = 5
+                    return JsonResponse({'response':'你買了一包卡包!!' ,'images':''})
+                else :
+                    self.status = 'home'
+                    return JsonResponse({'response':'你的咒不夠!! 滾啦!... '.format(self.cursePower),'images':''})
+
+            if self.status == 'draw' and self.newcards > 0 :
+                card = random.randint(1,3)
+                self.cards.append(card)
+                self.newcards -= 1 
+                if self.newcards == 0 :
+                    return JsonResponse({'response':'抽開!!! 你抽到 {}!!  沒有了~!'.format(card).format(self.cursePower),'images':''})
+                return JsonResponse({'response':'抽開!!! 你抽到 {}!!'.format(card).format(self.cursePower),'images':''})
+                
+                
             if user_input == 'newNote':
                 title = request.POST.get('title')
                 notes = request.POST.get('note')
@@ -113,7 +204,7 @@ class oWo_:
                 note = bulletNotemodel(title='Note',date=today,content=title,txt=notes)
                 note.save()
                 self.reflashBook()
-                return JsonResponse({'response':'加入!'})
+                return JsonResponse({'response':'加入!','images':''})
             elif user_input == "edNote":
                 title = request.POST.get('tit')
                 id_ = request.POST.get('id')
@@ -129,7 +220,7 @@ class oWo_:
                     note.date = today
                     note.save()
                 self.reflashBook()
-                return JsonResponse({'response':'加入!'})
+                return JsonResponse({'response':'加入!','images':''})
             elif user_input == "NOTE":
                 use = whatNotes()
                 self.notes = use.OP('Note')
@@ -162,50 +253,50 @@ class oWo_:
                         chat_what = topic.OP(user_input[1:])
                         self.reflashBook()
                         return JsonResponse({'response':
-                                             chat_what,'datas':self.notes})
+                                             chat_what,'datas':self.notes,'images':''})
                     if user_input[0] == '@' :
                         obj = user_input[1:]
                         if obj == '' :
                             topic = whatNotes()
                             self.notes = topic.OP('@')
-                            return JsonResponse({'response': chat_what,'datas':datas}) 
+                            return JsonResponse({'response': chat_what,'datas':datas,'images':''}) 
                         today = datetime.datetime.now()
                         today = today.strftime('%Y-%m-%d')
                         tod = bulletNotemodel(title='@',date=today,content=obj)
                         tod.save()
                         self.reflashBook()
-                        return  JsonResponse({'response': chat_what,'datas':datas})
+                        return  JsonResponse({'response': chat_what,'datas':datas,'images':''})
                     elif user_input[0] == '^':
                         obj = user_input[1:]
                         if len(self.curses)>=3+self.curseLv :
-                            return JsonResponse({'response':'咒書已滿!'})
+                            return JsonResponse({'response':'咒書已滿!','images':''})
                         else :
                             #self.curses.append(obj)
                             item = bulletNotemodel.objects.get(id=id_)
                             item.title = "咒"
                             item.save()
                             self.notes = getAllnotes()
-                            return JsonResponse({'response':'加入!'})
+                            return JsonResponse({'response':'加入!','images':''})
                     elif user_input[0] == '☞':
                         obj = user_input[1:]
                         item = bulletNotemodel.objects.get(id=id_)
                         item.delete()
                         self.notes = getAllnotes()
-                        return JsonResponse({'response':'刪除了!'})
+                        return JsonResponse({'response':'刪除了!','images':''})
                     elif user_input[0] == '~':
                         obj = user_input[1:]
                         item = bulletNotemodel.objects.get(id=id_)
                         item.title = '[誌]'
                         item.save()
                         self.notes = getAllnotes()
-                        return JsonResponse({'response':'改了'})
+                        return JsonResponse({'response':'改了','images':''})
                     elif user_input[0] == '$':
                         obj = user_input[1:]
                         item = bulletNotemodel.objects.get(id=id_)
                         item.title = '@'
                         item.save()
                         self.notes = getAllnotes()
-                        return JsonResponse({'response':'改了'})
+                        return JsonResponse({'response':'改了','images':''})
 
                     elif user_input[0] == '☄':
                         obj = user_input[1:]
@@ -225,7 +316,7 @@ class oWo_:
                         self.cursePower -= point
                         self.cursePowerchange(0)
                         self.notes = getAllnotes()
-                        return JsonResponse({'response':'咒退回!使用 '+str(point)+'咒力'})
+                        return JsonResponse({'response':'咒退回!使用 '+str(point)+'咒力','images':''})
 
                     elif user_input[0] == '✔':
                         obj = user_input[1:]
@@ -240,7 +331,7 @@ class oWo_:
                         point = random.randint(4,12)
                         self.cursePowerchange(point)
                         self.notes = getAllnotes()
-                        return JsonResponse({'response':'消除成功!獲 '+str(point)+'咒力'})
+                        return JsonResponse({'response':'消除成功!獲 '+str(point)+'咒力','images':''})
                     if user_input[0] == '?' :
                         topic = whatNotes()
                         obj = user_input[1:]
@@ -250,16 +341,16 @@ class oWo_:
                             self.notes = topic.OP(obj)
                             chat_what = "我馬上查詢" ;
                         return  JsonResponse({'response':
-                                              chat_what,'datas':self.notes})
+                                              chat_what,'datas':self.notes,'images':''})
                     if user_input[0] == '#' :
                         obj = user_input[1:]
                         if obj == '' :
-                            return  JsonResponse({'response': chat_what,'datas':datas})
+                            return  JsonResponse({'response': chat_what,'datas':datas,'images':''})
 
                         topic = ADDEVENT()
                         topic.OP(obj)
                         self.reflashBook()
-                        return  JsonResponse({'response': chat_what,'datas':datas})
+                        return  JsonResponse({'response': chat_what,'datas':datas,'images':''})
 
 
                     if user_input == 'logout':
@@ -278,10 +369,10 @@ class oWo_:
                         waaa = random.choice(says) 
                         chat_what.append(waaa)
      
-                        return JsonResponse({'response': chat_what,'datas':datas})
+                        return JsonResponse({'response': chat_what,'datas':datas,'images':''})
             # 假設chat_what是由AI模型回傳的回覆
             self.reflashBook()
-            return JsonResponse({'response': chat_what,'datas':datas})
+            return JsonResponse({'response': chat_what,'datas':datas,'images':''})
     
 
 
